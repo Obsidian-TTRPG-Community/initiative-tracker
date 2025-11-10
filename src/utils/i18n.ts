@@ -19,4 +19,4 @@ export function initI18n() {
     });
 }
 
-export const t = get(_);
+export const t: any = get(_);
