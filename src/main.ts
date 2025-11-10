@@ -16,6 +16,7 @@ import {
     INITIATIVE_TRACKER_VIEW,
     registerIcons
 } from "./utils";
+import { initI18n } from "./utils/i18n";
 
 import { PLAYER_VIEW_VIEW } from "./utils/constants";
 import type { InitiativeTrackerData } from "./settings/settings.types";
@@ -223,6 +224,8 @@ export default class InitiativeTracker extends Plugin {
         registerIcons();
 
         await this.loadSettings();
+
+        initI18n();
 
         this.setBuilderIcon();
 
