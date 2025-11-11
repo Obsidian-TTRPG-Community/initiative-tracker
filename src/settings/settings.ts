@@ -24,6 +24,7 @@ import {
     OVERFLOW_TYPE,
     RESOLVE_TIES
 } from "../utils";
+import { t } from "src/utils/i18n";
 import { RpgSystemSetting, getRpgSystem } from "../utils/rpg-system";
 import type { Party } from "./settings.types";
 import type { InputValidate } from "./settings.types";
@@ -41,7 +42,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             containerEl.empty();
             containerEl.addClass("initiative-tracker-settings");
 
-            containerEl.createEl("h2", { text: "Initiative Tracker Settings" });
+            containerEl.createEl("h2", { text: t("Initiative Tracker Settings") });
 
             this._displayBase(containerEl.createDiv());
             if (!this.plugin.data.openState) {
@@ -126,18 +127,18 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
         } catch (e) {
             console.error(e);
             new Notice(
-                "There was an error displaying the settings tab for Obsidian Initiative Tracker."
+                t("There was an error displaying the settings tab for Obsidian Initiative Tracker.")
             );
         }
     }
 
     private _displayBase(containerEl: HTMLDivElement) {
         containerEl.empty();
-        new Setting(containerEl).setHeading().setName("Basic Settings");
+        new Setting(containerEl).setHeading().setName(t("Basic Settings"));
         new Setting(containerEl)
-            .setName("Display Beginner Tips")
+            .setName(t("Display Beginner Tips"))
             .setDesc(
-                "Display instructions in the initiative tracker, helping you get used to the workflow."
+                t("Display instructions in the initiative tracker, helping you get used to the workflow.")
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.beginnerTips).onChange(
@@ -148,9 +149,9 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
             });
         new Setting(containerEl)
-            .setName("Display Encounter Difficulty")
+            .setName(t("Display Encounter Difficulty"))
             .setDesc(
-                "Display encounter difficulty based on creature CR and player level. Creatures without CR or level will not be considered in the calculation."
+                t("Display encounter difficulty based on creature CR and player level. Creatures without CR or level will not be considered in the calculation.")
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.displayDifficulty).onChange(
@@ -161,9 +162,9 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
             });
         new Setting(containerEl)
-            .setName("Roll Equivalent Creatures Together")
+            .setName(t("Roll Equivalent Creatures Together"))
             .setDesc(
-                "Equivalent creatures (same Name and AC) will roll the same initiative by default."
+                t("Equivalent creatures (same Name and AC) will roll the same initiative by default.")
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.condense).onChange(async (v) => {
@@ -173,9 +174,9 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName("Embed statblock-link content in the Creature View")
+            .setName(t("Embed statblock-link content in the Creature View"))
             .setDesc(
-                "Prefer embedded content from a statblock-link attribute when present. Fall back to the TTRPG plugin if the link is missing and the plugin is enabled."
+                t("Prefer embedded content from a statblock-link attribute when present. Fall back to the TTRPG plugin if the link is missing and the plugin is enabled.")
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.preferStatblockLink).onChange(
@@ -192,12 +193,12 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             this.plugin.data.openState.battle = additionalContainer.open;
         };
         const summary = additionalContainer.createEl("summary");
-        new Setting(summary).setHeading().setName("Battle");
+        new Setting(summary).setHeading().setName(t("Battle"));
         summary.createDiv("collapser").createDiv("handle");
         new Setting(additionalContainer)
-            .setName("Clamp Minimum HP")
+            .setName(t("Clamp Minimum HP"))
             .setDesc(
-                "When a creature takes damage that would reduce its HP below 0, its HP is set to 0 instead."
+                t("When a creature takes damage that would reduce its HP below 0, its HP is set to 0 instead.")
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.clamp).onChange(async (v) => {
@@ -206,14 +207,14 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 });
             });
         new Setting(additionalContainer)
-            .setName("Overflow Healing")
+            .setName(t("Overflow Healing"))
             .setDesc(
-                "Set what happens to healing which goes above creatures' max HP threshold."
+                t("Set what happens to healing which goes above creatures' max HP threshold.")
             )
             .addDropdown((d) => {
-                d.addOption(OVERFLOW_TYPE.ignore, "Ignore");
-                d.addOption(OVERFLOW_TYPE.temp, "Add to temp HP");
-                d.addOption(OVERFLOW_TYPE.current, "Add to current HP");
+                d.addOption(OVERFLOW_TYPE.ignore, t("Ignore"));
+                d.addOption(OVERFLOW_TYPE.temp, t("Add to temp HP"));
+                d.addOption(OVERFLOW_TYPE.current, t("Add to current HP"));
                 d.setValue(this.plugin.data.hpOverflow ?? OVERFLOW_TYPE.ignore);
                 d.onChange(async (v) => {
                     this.plugin.data.hpOverflow = v;
@@ -221,9 +222,9 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 });
             });
         new Setting(additionalContainer)
-            .setName("Automatic Unconscious Status Application")
+            .setName(t("Automatic Unconscious Status Application"))
             .setDesc(
-                'When a creature takes damage that would reduce its HP below 0, it gains the "Unconscious" status effect.'
+                t('When a creature takes damage that would reduce its HP below 0, it gains the "Unconscious" status effect.')
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.autoStatus).onChange(async (v) => {
@@ -232,9 +233,9 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 });
             });
         new Setting(additionalContainer)
-            .setName("Additive Temporary HP")
+            .setName(t("Additive Temporary HP"))
             .setDesc(
-                "Any temporary HP added to a creature will be added on top of existing temporary HP."
+                t("Any temporary HP added to a creature will be added on top of existing temporary HP.")
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.additiveTemp).onChange(
@@ -245,9 +246,9 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
             });
         new Setting(additionalContainer)
-            .setName("Display Player HP in Player View")
+            .setName(t("Display Player HP in Player View"))
             .setDesc(
-                "If turned off, player health will display as 'Healthy', 'Hurt', etc."
+                t("If turned off, player health will display as 'Healthy', 'Hurt', etc.")
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.diplayPlayerHPValues).onChange(
@@ -258,15 +259,15 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
             });
         new Setting(additionalContainer)
-            .setName("Roll HP for Creatures")
+            .setName(t("Roll HP for Creatures"))
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Creatures added to encounters will automatically roll for HP if the "
+                        text: t("Creatures added to encounters will automatically roll for HP if the ")
                     });
                     e.createEl("code", { text: "hit_dice" });
                     e.createSpan({
-                        text: " property is set for the creature."
+                        text: t(" property is set for the creature.")
                     });
                 })
             )
@@ -278,9 +279,9 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             });
 
         new Setting(additionalContainer)
-            .setName("Log Battles")
+            .setName(t("Log Battles"))
             .setDesc(
-                "Actions taken during battle will be logged to the specified log folder."
+                t("Actions taken during battle will be logged to the specified log folder.")
             )
             .addToggle((t) =>
                 t.setValue(this.plugin.data.logging).onChange(async (v) => {
@@ -293,14 +294,14 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             this.plugin.data.logFolder
         );
         new Setting(additionalContainer)
-            .setName("Log Folder")
+            .setName(t("Log Folder"))
             .setDesc(
                 createFragment(async (e) => {
                     e.createSpan({
-                        text: "A new note will be created in this folder for each battle."
+                        text: t("A new note will be created in this folder for each battle.")
                     });
                     e.createEl("br");
-                    e.createSpan({ text: "Current: " });
+                    e.createSpan({ text: t("Current: ") });
                     e.createEl("code", { text: this.plugin.data.logFolder });
 
                     if (!exists) {
@@ -310,7 +311,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                         );
                         setIcon(container, "initiative-tracker-warning");
                         container.createSpan({
-                            text: "This folder does not exist and will be created when a log file is written for the first time."
+                            text: t("This folder does not exist and will be created when a log file is written for the first time.")
                         });
                     }
                 })
@@ -332,14 +333,14 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 });
             });
         new Setting(additionalContainer)
-            .setName("Resolve Initiative Ties")
+            .setName(t("Resolve Initiative Ties"))
             .setDesc(
-                "Define what happens if two creatures have the same initiative."
+                t("Define what happens if two creatures have the same initiative.")
             )
             .addDropdown((d) => {
-                d.addOption(RESOLVE_TIES.playerFirst, "Player first");
-                d.addOption(RESOLVE_TIES.npcFirst, "NPC first");
-                d.addOption(RESOLVE_TIES.random, "Random");
+                d.addOption(RESOLVE_TIES.playerFirst, t("Player first"));
+                d.addOption(RESOLVE_TIES.npcFirst, t("NPC first"));
+                d.addOption(RESOLVE_TIES.random, t("Random"));
                 d.setValue(
                     this.plugin.data.resolveTies ?? RESOLVE_TIES.playerFirst
                 );
@@ -355,16 +356,16 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             this.plugin.data.openState.player = additionalContainer.open;
         };
         const summary = additionalContainer.createEl("summary");
-        new Setting(summary).setHeading().setName("Players");
+        new Setting(summary).setHeading().setName(t("Players"));
         summary.createDiv("collapser").createDiv("handle");
         new Setting(additionalContainer)
-            .setName("Add New Player")
+            .setName(t("Add New Player"))
             .setDesc(
-                "Players added here will be available to add to a party. If you do not have a party created, all players will be added to a new encounter."
+                t("Players added here will be available to add to a party. If you do not have a party created, all players will be added to a new encounter.")
             )
             .addButton((button: ButtonComponent): ButtonComponent => {
                 let b = button
-                    .setTooltip("Add Player")
+                    .setTooltip(t("Add Player"))
                     .setButtonText("+")
                     .onClick(async () => {
                         const modal = new NewPlayerModal(this.plugin);
@@ -393,18 +394,18 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                     }
                 })
                 .createSpan({
-                    text: "No saved players! Create one to see it here."
+                    text: t("No saved players! Create one to see it here.")
                 });
         } else {
             const headers = playerView.createDiv(
                 "initiative-tracker-player headers"
             );
 
-            headers.createDiv({ text: "Name" });
+            headers.createDiv({ text: t("Name") });
             setIcon(
                 headers.createDiv({
                     attr: {
-                        "aria-label": "Level"
+                        "aria-label": t("Level")
                     }
                 }),
                 "swords"
@@ -412,7 +413,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             setIcon(
                 headers.createDiv({
                     attr: {
-                        "aria-label": "Max HP"
+                        "aria-label": t("Max HP")
                     }
                 }),
                 HP
@@ -420,7 +421,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             setIcon(
                 headers.createDiv({
                     attr: {
-                        "aria-label": "Armor Class"
+                        "aria-label": t("Armor Class")
                     }
                 }),
                 AC
@@ -428,7 +429,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             setIcon(
                 headers.createDiv({
                     attr: {
-                        "aria-label": "Initiative Modifier"
+                        "aria-label": t("Initiative Modifier")
                     }
                 }),
                 INITIATIVE
@@ -457,7 +458,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
                 new ExtraButtonComponent(icons.createDiv())
                     .setIcon("pencil")
-                    .setTooltip("Edit")
+                    .setTooltip(t("Edit"))
                     .onClick(() => {
                         const modal = new NewPlayerModal(this.plugin, player);
                         modal.open();
@@ -473,7 +474,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                     });
                 new ExtraButtonComponent(icons.createDiv())
                     .setIcon("trash")
-                    .setTooltip("Delete")
+                    .setTooltip(t("Delete"))
                     .onClick(async () => {
                         this.plugin.deletePlayer(player);
 
@@ -501,7 +502,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 const icons = playerDiv.createDiv({
                     cls: "initiative-tracker-player-icon imported",
                     attr: {
-                        "aria-label": "Imported from Fantasy Statblocks"
+                        "aria-label": t("Imported from Fantasy Statblocks")
                     }
                 });
                 setIcon(icons, "heart-handshake");
@@ -514,23 +515,23 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             this.plugin.data.openState.player = additionalContainer.open;
         };
         const summary = additionalContainer.createEl("summary");
-        new Setting(summary).setHeading().setName("Encounters");
+        new Setting(summary).setHeading().setName(t("Encounters"));
         summary.createDiv("collapser").createDiv("handle");
         const explanation = additionalContainer.createDiv(
             "initiative-tracker-explanation"
         );
         explanation.createEl("span", {
-            text: "The encounter builder allows you to quickly create encounters that can be saved for later use or immediately launched into a battle."
+            text: t("The encounter builder allows you to quickly create encounters that can be saved for later use or immediately launched into a battle.")
         });
         explanation.createEl("br");
         explanation.createEl("br");
         explanation.createEl("span", {
-            text: "It can be opened using the sidebar shortcut (if enabled) or by using the Open Encounter Builder command."
+            text: t("It can be opened using the sidebar shortcut (if enabled) or by using the Open Encounter Builder command.")
         });
         new Setting(additionalContainer)
-            .setName("Add Sidebar Shortcut")
+            .setName(t("Add Sidebar Shortcut"))
             .setDesc(
-                "A sidebar shortcut will be added to open the Encounter Builder."
+                t("A sidebar shortcut will be added to open the Encounter Builder.")
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.builder.sidebarIcon).onChange(
@@ -541,8 +542,8 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
             });
         new Setting(additionalContainer)
-            .setName("XP System")
-            .setDesc("XP system to use for encounters")
+            .setName(t("XP System"))
+            .setDesc(t("XP system to use for encounters"))
             .addDropdown((d) => {
                 Object.values(RpgSystemSetting).forEach((system) =>
                     d.addOption(
@@ -560,7 +561,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             });
 
         const additional = additionalContainer.createDiv("additional");
-        new Setting(additional).setHeading().setName("Saved Encounters");
+        new Setting(additional).setHeading().setName(t("Saved Encounters"));
         if (!Object.keys(this.plugin.data.encounters).length) {
             additional
                 .createDiv({
@@ -569,7 +570,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                     }
                 })
                 .createSpan({
-                    text: "No saved encounters! Create one to see it here."
+                    text: t("No saved encounters! Create one to see it here.")
                 });
         } else {
             for (const [name, encounter] of Object.entries(
@@ -591,13 +592,13 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
 
                             if (players.length) {
                                 e.createSpan({
-                                    text: `Players: ${players.join(", ")}`
+                                    text: `${t("Players:")} ${players.join(", ")}`
                                 });
                                 e.createEl("br");
                             }
                             if (creatures.length) {
                                 e.createSpan({
-                                    text: `Creatures: ${creatures.join(", ")}`
+                                    text: `${t("Creatures:")} ${creatures.join(", ")}`
                                 });
                                 e.createEl("br");
                             }
@@ -627,26 +628,26 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             this.plugin.data.openState.party = additionalContainer.open;
         };
         const summary = additionalContainer.createEl("summary");
-        new Setting(summary).setHeading().setName("Parties");
-        summary.createDiv("collapser").createDiv("handle");
+        new Setting(summary).setHeading().setName(t("Parties"));
+        summary.createDiv("collapser").createDiv(t("handle"));
         const explanation = additionalContainer.createDiv(
             "initiative-tracker-explanation"
         );
         explanation.createEl("span", {
-            text: "Parties allow you to create different groups of your players. Each player can be a member of multiple parties."
+            text: t("Parties allow you to create different groups of your players. Each player can be a member of multiple parties.")
         });
         explanation.createEl("br");
         explanation.createEl("br");
         explanation.createEl("span", {
-            text: "You can set a default party for encounters to use, or specify the party for the encounter in the encounter block. While running an encounter in the tracker, you can change the active party, allowing you to quickly switch which players are in combat."
+            text: t("You can set a default party for encounters to use, or specify the party for the encounter in the encounter block. While running an encounter in the tracker, you can change the active party, allowing you to quickly switch which players are in combat.")
         });
         new Setting(additionalContainer)
-            .setName("Default Party")
+            .setName(t("Default Party"))
             .setDesc(
-                "The tracker will load this party to encounters by default."
+                t("The tracker will load this party to encounters by default.")
             )
             .addDropdown((d) => {
-                d.addOption("none", "None");
+                d.addOption("none", t("None"));
                 for (const party of this.plugin.data.parties) {
                     d.addOption(party.name, party.name);
                 }
@@ -657,10 +658,10 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 });
             });
         new Setting(additionalContainer)
-            .setName("Add New Party")
+            .setName(t("Add New Party"))
             .addButton((button: ButtonComponent): ButtonComponent => {
                 let b = button
-                    .setTooltip("Add Party")
+                    .setTooltip(t("Add Party"))
                     .setButtonText("+")
                     .onClick(async () => {
                         const modal = new PartyModal(this.plugin);
@@ -705,7 +706,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                     }
                 })
                 .createSpan({
-                    text: "No saved parties! Create one to see it here."
+                    text: t("No saved parties! Create one to see it here.")
                 });
         } else {
             for (const party of this.plugin.data.parties) {
@@ -781,12 +782,12 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             this.plugin.data.openState.status = additionalContainer.open;
         };
         const summary = additionalContainer.createEl("summary");
-        new Setting(summary).setHeading().setName("Statuses");
+        new Setting(summary).setHeading().setName(t("Statuses"));
 
         new Setting(additionalContainer)
-            .setName("Unconscious Status")
+            .setName(t("Unconscious Status"))
             .setDesc(
-                "Choose a different status to be used as the default Unconscious status."
+                t("Choose a different status to be used as the default Unconscious status.")
             )
             .addDropdown((d) => {
                 for (const status of this.plugin.data.statuses) {
@@ -797,11 +798,11 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             });
         summary.createDiv("collapser").createDiv("handle");
         const add = new Setting(additionalContainer)
-            .setName("Add New Status")
-            .setDesc("These statuses will be available to apply to creatures.")
+            .setName(t("Add New Status"))
+            .setDesc(t("These statuses will be available to apply to creatures."))
             .addButton((button: ButtonComponent): ButtonComponent => {
                 let b = button
-                    .setTooltip("Add Status")
+                    .setTooltip(t("Add Status"))
                     .setButtonText("+")
                     .onClick(async () => {
                         const modal = new StatusModal(this.plugin);
@@ -838,7 +839,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             add.addExtraButton((b) =>
                 b
                     .setIcon("reset")
-                    .setTooltip("Re-add Default Statuses")
+                    .setTooltip(t("Re-add Default Statuses"))
                     .onClick(async () => {
                         this.plugin.data.statuses = Array.from(
                             new Map(
@@ -866,7 +867,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                             setIcon(
                                 div.createDiv({
                                     attr: {
-                                        "aria-label": "Reset Each Round"
+                                        "aria-label": t("Reset Each Round")
                                     }
                                 }),
                                 "timer-reset"
@@ -876,7 +877,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                             setIcon(
                                 div.createDiv({
                                     attr: {
-                                        "aria-label": "Has Amount"
+                                        "aria-label": t("Has Amount")
                                     }
                                 }),
                                 "hash"
@@ -947,31 +948,31 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             this.plugin.data.openState.plugin = containerEl.open;
         };
         const summary = containerEl.createEl("summary");
-        new Setting(summary).setHeading().setName("Plugin Integrations");
+        new Setting(summary).setHeading().setName(t("Plugin Integrations"));
         summary.createDiv("collapser").createDiv("handle");
         if (!this.plugin.canUseStatBlocks) {
             this.plugin.data.sync = false;
             await this.plugin.saveSettings();
         }
         new Setting(containerEl)
-            .setName("Sync Monsters from Fantasy Statblocks")
+            .setName(t("Sync Monsters from Fantasy Statblocks"))
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Homebrew creatures saved to the Fantasy Statblocks plugin will be available to use."
+                        text: t("Homebrew creatures saved to the Fantasy Statblocks plugin will be available to use.")
                     });
                     if (!this.plugin.canUseStatBlocks) {
                         e.createEl("br");
                         e.createEl("br");
                         e.createSpan({
-                            text: "Install and enable the "
+                            text: t("Install and enable the ")
                         });
                         e.createEl("a", {
                             text: "Fantasy Statblocks",
                             href: "obsidian://show-plugin?id=obsidian-5e-statblocks"
                         });
                         e.createSpan({
-                            text: " plugin to use homebrew creatures."
+                            text: t(" plugin to use homebrew creatures.")
                         });
                     }
                 })
@@ -992,19 +993,19 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             );
             synced.settingEl.addClass("initiative-synced");
             setIcon(synced.nameEl, "check-in-circle");
-            synced.nameEl.appendChild(createSpan({ text: "Synced" }));
+            synced.nameEl.appendChild(createSpan({ text: t("Synced") }));
         }
 
         new Setting(containerEl)
-            .setName("Initiative Formula")
+            .setName(t("Initiative Formula"))
             .setDesc(
                 createFragment((e) => {
                     e.createSpan({
-                        text: "Initiative formula to use when calculating initiative. Use "
+                        text: t("Initiative formula to use when calculating initiative. Use ")
                     });
                     e.createEl("code", { text: "%mod%" });
                     e.createSpan({
-                        text: " for the modifier placeholder."
+                        text: t(" for the modifier placeholder.")
                     });
                     if (!this.plugin.canUseDiceRoller) {
                         e.createEl("br");
@@ -1013,7 +1014,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                             attr: {
                                 style: `color: var(--text-error);`
                             },
-                            text: "Requires the "
+                            text: t("Requires the ")
                         });
                         e.createEl("a", {
                             text: "Dice Roller",
@@ -1024,7 +1025,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                             attr: {
                                 style: `color: var(--text-error);`
                             },
-                            text: " plugin to modify."
+                            text: t(" plugin to modify.")
                         });
                     }
                 })
@@ -1066,12 +1067,12 @@ class NewPlayerModal extends Modal {
         let error = false;
 
         contentEl.createEl("h2", {
-            text: this.original ? "Edit Player" : "New Player"
+            text: this.original ? t("Edit Player") : t("New Player")
         });
 
         new Setting(contentEl)
-            .setName("Link to Note")
-            .setDesc("Link player to a note in your vault.")
+            .setName(t("Link to Note"))
+            .setDesc(t("Link player to a note in your vault."))
             .addText((t) => {
                 t.setValue(this.player.note ?? "");
 
@@ -1111,8 +1112,8 @@ class NewPlayerModal extends Modal {
             modInput: InputValidate;
 
         new Setting(contentEl)
-            .setName("Name")
-            .setDesc("Player name. Must be unique!")
+            .setName(t("Name"))
+            .setDesc(t("Player name. Must be unique!"))
             .addText((t) => {
                 nameInput = {
                     input: t.inputEl,
@@ -1136,8 +1137,8 @@ class NewPlayerModal extends Modal {
                 });
             });
         new Setting(contentEl)
-            .setName("Level")
-            .setDesc("Player level.")
+            .setName(t("Level"))
+            .setDesc(t("Player level."))
             .addText((t) => {
                 levelInput = {
                     input: t.inputEl,
@@ -1156,7 +1157,7 @@ class NewPlayerModal extends Modal {
                     this.player.level = Number(v);
                 });
             });
-        new Setting(contentEl).setName("Max Hit Points").addText((t) => {
+        new Setting(contentEl).setName(t("Max Hit Points")).addText((t) => {
             hpInput = {
                 input: t.inputEl,
                 validate: (i: HTMLInputElement) => {
@@ -1174,15 +1175,15 @@ class NewPlayerModal extends Modal {
                 this.player.hp = Number(v);
             });
         });
-        new Setting(contentEl).setName("Armor Class").addText((t) => {
+        new Setting(contentEl).setName(t("Armor Class")).addText((t) => {
             t.setValue(`${this.player.ac ?? ""}`);
             t.onChange((v) => {
                 this.player.ac = v;
             });
         });
         new Setting(contentEl)
-            .setName("Initiative Modifier")
-            .setDesc("This will be added to randomly-rolled initiatives.")
+            .setName(t("Initiative Modifier"))
+            .setDesc(t("This will be added to randomly-rolled initiatives."))
             .addText((t) => {
                 modInput = {
                     input: t.inputEl,
@@ -1204,7 +1205,7 @@ class NewPlayerModal extends Modal {
         let footerEl = contentEl.createDiv();
         let footerButtons = new Setting(footerEl);
         footerButtons.addButton((b) => {
-            b.setTooltip("Save")
+            b.setTooltip(t("Save"))
                 .setIcon("checkmark")
                 .onClick(async () => {
                     let error = this.validateInputs(
@@ -1213,7 +1214,7 @@ class NewPlayerModal extends Modal {
                         modInput
                     );
                     if (error) {
-                        new Notice("Fix errors before saving.");
+                        new Notice(t("Fix errors before saving."));
                         return;
                     }
                     this.saved = true;
@@ -1223,7 +1224,7 @@ class NewPlayerModal extends Modal {
         });
         footerButtons.addExtraButton((b) => {
             b.setIcon("cross")
-                .setTooltip("Cancel")
+                .setTooltip(t("Cancel"))
                 .onClick(() => {
                     this.saved = false;
                     this.close();
@@ -1257,8 +1258,8 @@ export async function confirmWithModal(
     app: App,
     text: string,
     buttons: { cta: string; secondary: string } = {
-        cta: "Yes",
-        secondary: "No"
+        cta: t("Yes"),
+        secondary: t("No")
     }
 ): Promise<boolean> {
     return new Promise((resolve, reject) => {
@@ -1331,12 +1332,12 @@ class StatusModal extends Modal {
     }
     warned = false;
     onOpen() {
-        this.titleEl.setText(this.editing ? "Edit Status" : "New Status");
+        this.titleEl.setText(this.editing ? t("Edit Status") : t("New Status"));
         this.contentEl.empty();
         const name = new Setting(this.contentEl)
-            .setName("Name")
-            .addText((t) => {
-                t.setValue(this.status.name).onChange((v) => {
+            .setName(t("Name"))
+            .addText((tx) => {
+                tx.setValue(this.status.name).onChange((v) => {
                     this.status.name = v;
                     if (
                         this.plugin.data.statuses.find(
@@ -1356,7 +1357,7 @@ class StatusModal extends Modal {
                                     "initiative-tracker-warning"
                                 );
                                 container.createSpan({
-                                    text: "A status by this name already exists and will be overwritten."
+                                    text: t("A status by this name already exists and will be overwritten.")
                                 });
                             })
                         );
@@ -1366,15 +1367,15 @@ class StatusModal extends Modal {
                     }
                 });
             });
-        new Setting(this.contentEl).setName("Description").addTextArea((t) => {
+        new Setting(this.contentEl).setName(t("Description")).addTextArea((t) => {
             t.setValue(this.status.description).onChange(
                 (v) => (this.status.description = v)
             );
         });
         new Setting(this.contentEl)
-            .setName("Remove Each Round")
+            .setName(t("Remove Each Round"))
             .setDesc(
-                "This status will be removed from all creatures at the start of a new round."
+                t("This status will be removed from all creatures at the start of a new round.")
             )
             .addToggle((t) =>
                 t
@@ -1382,9 +1383,9 @@ class StatusModal extends Modal {
                     .onChange((v) => (this.status.resetOnRound = v))
             );
         new Setting(this.contentEl)
-            .setName("Has Amount")
+            .setName(t("Has Amount"))
             .setDesc(
-                "This status has an amount that can be increased or decreased during combat."
+                t("This status has an amount that can be increased or decreased during combat.")
             )
             .addToggle((t) =>
                 t.setValue(this.status.hasAmount).onChange((v) => {
@@ -1394,8 +1395,8 @@ class StatusModal extends Modal {
             );
         if (this.status.hasAmount) {
             new Setting(this.contentEl)
-                .setName("Starting Amount")
-                .setDesc("The status will default to this amount when added.")
+                .setName(t("Starting Amount"))
+                .setDesc(t("The status will default to this amount when added."))
                 .addText(
                     (t) =>
                         (t
@@ -1410,7 +1411,7 @@ class StatusModal extends Modal {
         new ButtonComponent(
             this.contentEl.createDiv("initiative-tracker-cancel")
         )
-            .setButtonText("Cancel")
+            .setButtonText(t("Cancel"))
             .onClick(() => {
                 this.canceled = true;
                 this.close();
@@ -1437,13 +1438,13 @@ class PartyModal extends Modal {
     }
     onOpen(): void {
         this.titleEl.setText(
-            this.editing ? `Edit ${this.party.name ?? "Party"}` : "New Party"
+            this.editing ? `${t("Edit")} ${this.party.name ?? t("Party")}` : t("New Party")
         );
 
         const name = new Setting(this.contentEl)
-            .setName("Name")
-            .addText((t) => {
-                t.setValue(this.party.name).onChange((v) => {
+            .setName(t("Name"))
+            .addText((tx) => {
+                tx.setValue(this.party.name).onChange((v) => {
                     this.party.name = v;
                     if (
                         this.plugin.data.parties.find(
@@ -1463,7 +1464,7 @@ class PartyModal extends Modal {
                                     "initiative-tracker-warning"
                                 );
                                 container.createSpan({
-                                    text: "A party by this name already exists and will be overwritten."
+                                    text: t("A party by this name already exists and will be overwritten.")
                                 });
                             })
                         );
@@ -1479,7 +1480,7 @@ class PartyModal extends Modal {
         );
         let playerText: TextComponent;
         new Setting(playersEl)
-            .setName("Add Player to Party")
+            .setName(t("Add Player to Party"))
             .addText((t) => {
                 playerText = t;
                 const modal = new PlayerSuggestionModal(this.plugin.app, t, [
@@ -1494,12 +1495,12 @@ class PartyModal extends Modal {
                     if (!playerText.getValue() || !playerText.getValue().length)
                         return;
                     if (this.party.players.includes(playerText.getValue())) {
-                        new Notice("That player is already in this party!");
+                        new Notice(t("That player is already in this party!"));
                         return;
                     }
                     if (!this.plugin.players.has(playerText.getValue())) {
                         new Notice(
-                            "That player doesn't exist! You should make them first."
+                            t("That player doesn't exist! You should make them first.")
                         );
                         return;
                     }
@@ -1514,7 +1515,7 @@ class PartyModal extends Modal {
         new ButtonComponent(
             this.contentEl.createDiv("initiative-tracker-cancel")
         )
-            .setButtonText("Cancel")
+            .setButtonText(t("Cancel"))
             .onClick(() => {
                 this.canceled = true;
                 this.close();
@@ -1542,7 +1543,7 @@ class PartyModal extends Modal {
                     }
                 })
                 .createSpan({
-                    text: "Add a player to the party to see it here."
+                    text: t("Add a player to the party to see it here.")
                 });
         }
     }
