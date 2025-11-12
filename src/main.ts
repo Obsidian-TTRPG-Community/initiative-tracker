@@ -223,9 +223,9 @@ export default class InitiativeTracker extends Plugin {
     async onload() {
         registerIcons();
 
-        await this.loadSettings();
-
         initI18n();
+
+        await this.loadSettings();
 
         this.setBuilderIcon();
 
