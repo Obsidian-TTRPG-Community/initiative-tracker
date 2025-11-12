@@ -18,6 +18,7 @@
         SAVE,
         STOP
     } from "src/utils";
+    import { t } from "src/utils/i18n";
     import { createEventDispatcher, getContext } from "svelte";
     import type InitiativeTracker from "src/main";
     import { tracker } from "../stores/tracker";
@@ -29,25 +30,25 @@
     const playButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon(PLAY)
-            .setTooltip("Play")
+            .setTooltip(t("Play"))
             .onClick(() => tracker.setState(true));
     };
     const stopButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon(STOP)
-            .setTooltip("Stop")
+            .setTooltip(t("Stop"))
             .onClick(() => tracker.setState(false));
     };
     const nextButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon(FORWARD)
-            .setTooltip("Next")
+            .setTooltip(t("Next"))
             .onClick(() => tracker.goToNext());
     };
     const prevButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon(BACKWARD)
-            .setTooltip("Previous")
+            .setTooltip(t("Previous"))
             .onClick(() => tracker.goToPrevious());
     };
 
@@ -59,30 +60,30 @@
         const menu = new Menu();
         menu.addItem((item) => {
             item.setIcon(NEW)
-                .setTitle("New Encounter")
+                .setTitle(t("New Encounter"))
                 .onClick(() => tracker.new(plugin));
         });
         menu.addItem((item) => {
             item.setIcon(NEW)
-                .setTitle("Add Creatures")
+                .setTitle(t("Add Creatures"))
                 .onClick(() => dispatch("add-creatures"));
         });
         menu.addItem((item) => {
             item.setIcon(REDO)
-                .setTitle("Reset HP / Status")
+                .setTitle(t("Reset HP / Status"))
                 .onClick(() => tracker.reset());
         });
         menu.addItem((item) => {
             item.setIcon(DICE)
-                .setTitle("Re-roll Initiatives")
+                .setTitle(t("Re-roll Initiatives"))
                 .onClick(() => tracker.roll(plugin));
         });
         menu.addItem((item) => {
             item.setIcon(GROUP)
                 .setTitle(
                     plugin.data.condense
-                        ? "Expand Creatures"
-                        : "Group Creatures"
+                        ? t("Expand Creatures")
+                        : t("Group Creatures")
                 )
                 .onClick(async () => {
                     plugin.data.condense = !plugin.data.condense;
@@ -90,20 +91,20 @@
                     item.setIcon(plugin.data.condense ? EXPAND : GROUP);
                     item.setTitle(
                         plugin.data.condense
-                            ? "Expand Creatures"
-                            : "Group Creatures"
+                            ? t("Expand Creatures")
+                            : t("Group Creatures")
                     );
                 });
         });
         menu.addItem((item) => {
-            item.setTitle($sort ? "Sort Ascending" : "Sort Descending").onClick(
+            item.setTitle($sort ? t("Sort Ascending") : t("Sort Descending")).onClick(
                 async () => {
                     plugin.data.descending = !plugin.data.descending;
                     await plugin.saveSettings();
                     item.setTitle(
                         plugin.data.descending
-                            ? "Sort Ascending"
-                            : "Sort Descending"
+                            ? t("Sort Ascending")
+                            : t("Sort Descending")
                     );
                 }
             );
@@ -114,11 +115,11 @@
             if (Platform.isMobile) {
                 menu.addItem((item) => {
                     /* const partyMenu =  */ item.setIcon("switch")
-                        .setTitle("Switch Party")
+                        .setTitle(t("Switch Party"))
                         .setIsLabel(true);
                 });
                 menu.addItem((item) => {
-                    item.setTitle("None")
+                    item.setTitle(t("None"))
                         .onClick(() => {
                             tracker.setParty("", plugin);
                         })
@@ -137,10 +138,10 @@
                 menu.addItem((item) => {
                     const partyMenu = item
                         .setIcon("switch")
-                        .setTitle("Switch Party")
+                        .setTitle(t("Switch Party"))
                         .setSubmenu();
                     partyMenu.addItem((item) => {
-                        item.setTitle("None")
+                        item.setTitle(t("None"))
                             .onClick(() => {
                                 tracker.setParty("", plugin);
                             })
@@ -161,11 +162,11 @@
         if (Platform.isMobile) {
             menu.addItem((item) => {
                 item.setIcon("dice")
-                    .setTitle("Party Rolling Behavior")
+                    .setTitle(t("Party Rolling Behavior"))
                     .setIsLabel(true);
             });
             menu.addItem((item) => {
-                item.setTitle("Always Roll")
+                item.setTitle(t("Always Roll"))
                     .onClick(async () => {
                         plugin.data.rollPlayerInitiatives =
                             RollPlayerInitiativeBehavior.Always;
@@ -177,7 +178,7 @@
                     );
             });
             menu.addItem((item) => {
-                item.setTitle("Never Roll")
+                item.setTitle(t("Never Roll"))
                     .onClick(async () => {
                         plugin.data.rollPlayerInitiatives =
                             RollPlayerInitiativeBehavior.Never;
@@ -189,7 +190,7 @@
                     );
             });
             menu.addItem((item) => {
-                item.setTitle("Set to Zero")
+                item.setTitle(t("Set to Zero"))
                     .onClick(async () => {
                         plugin.data.rollPlayerInitiatives =
                             RollPlayerInitiativeBehavior.SetToZero;
@@ -204,11 +205,11 @@
             menu.addItem((item) => {
                 const partyMenu = item
                     .setIcon("dice")
-                    .setTitle("Party Rolling Behavior")
+                    .setTitle(t("Party Rolling Behavior"))
                     .setSubmenu();
 
                 partyMenu.addItem((item) => {
-                    item.setTitle("Always Roll")
+                    item.setTitle(t("Always Roll"))
                         .onClick(async () => {
                             plugin.data.rollPlayerInitiatives =
                                 RollPlayerInitiativeBehavior.Always;
@@ -220,7 +221,7 @@
                         );
                 });
                 partyMenu.addItem((item) => {
-                    item.setTitle("Never Roll")
+                    item.setTitle(t("Never Roll"))
                         .onClick(async () => {
                             plugin.data.rollPlayerInitiatives =
                                 RollPlayerInitiativeBehavior.Never;
@@ -232,7 +233,7 @@
                         );
                 });
                 partyMenu.addItem((item) => {
-                    item.setTitle("Set to Zero")
+                    item.setTitle(t("Set to Zero"))
                         .onClick(async () => {
                             plugin.data.rollPlayerInitiatives =
                                 RollPlayerInitiativeBehavior.SetToZero;
@@ -251,7 +252,7 @@
             menu.addItem((item) => {
                 const load = item
                     .setIcon("open-elsewhere-glyph")
-                    .setTitle("Load Encounter")
+                    .setTitle(t("Load Encounter"))
                     .setDisabled(
                         Object.keys(plugin.data.encounters).length == 0
                     )
@@ -272,7 +273,7 @@
         } else {
             menu.addItem((item) => {
                 item.setIcon("open-elsewhere-glyph")
-                    .setTitle("Load Encounter")
+                    .setTitle(t("Load Encounter"))
                     .setIsLabel(true);
             });
             for (const encounter of Object.keys(plugin.data.encounters)) {
@@ -285,7 +286,7 @@
         }
         menu.addItem((item) => {
             item.setIcon(SAVE)
-                .setTitle("Save Encounter")
+                .setTitle(t("Save Encounter"))
                 .onClick(() => {
                     dispatch("save");
                 });
@@ -325,7 +326,7 @@
         {#if $logFile}
             <div
                 use:logFileButton
-                aria-label="Open Log File"
+                aria-label={t("Open Log File")}
                 on:click={openLogFile}
             />
         {/if}
@@ -333,7 +334,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
                 use:playerView
-                aria-label="Open Player View"
+                aria-label={t("Open Player View")}
                 on:click={(evt) => dispatch("player-view")}
             />
         {/if}

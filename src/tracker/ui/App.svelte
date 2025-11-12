@@ -16,6 +16,7 @@
     import { AddCreatureModal } from "./create/modal";
     import Legacy from "./create/Legacy.svelte";
     import type { Creature } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
     import Difficulty from "./Difficulty.svelte";
 
     export let plugin: InitiativeTracker;
@@ -45,11 +46,11 @@
         modal.open();
     };
     const addButton = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setTooltip("Add Creature").setIcon(ADD);
+        new ExtraButtonComponent(node).setTooltip(t("Add Creature")).setIcon(ADD);
     };
     const copyButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setTooltip("Copy Initiative Order")
+            .setTooltip(t("Copy Initiative Order"))
             .setIcon(COPY)
             .onClick(async () => {
                 const contents = $ordered
@@ -59,10 +60,10 @@
                     .join("\n");
                 try {
                     await navigator.clipboard.writeText(contents);
-                    new Notice("Initiative order copied to clipboard.");
+                    new Notice(t("Initiative order copied to clipboard."));
                 } catch (e) {
                     new Notice(
-                        "Initiative order could not be copied to clipboard."
+                        t("Initiative order could not be copied to clipboard.")
                     );
                 }
             });

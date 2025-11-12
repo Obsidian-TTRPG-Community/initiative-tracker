@@ -2,13 +2,14 @@ import { ItemView, WorkspaceLeaf } from "obsidian";
 import type InitiativeTracker from "src/main";
 import type { Creature } from "src/utils/creature";
 import { PLAYER_VIEW_VIEW } from "../utils";
+import { t } from "src/utils/i18n";
 
 import App from "./player/PlayerView.svelte";
 
 export default class PlayerView extends ItemView {
     _app: App;
     getDisplayText(): string {
-        return "Player View";
+        return t("Player View");
     }
     getViewType(): string {
         return PLAYER_VIEW_VIEW;

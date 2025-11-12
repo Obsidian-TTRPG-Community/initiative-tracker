@@ -1,6 +1,7 @@
 <script lang="ts">
     import { ExtraButtonComponent, setIcon } from "obsidian";
     import type { Condition } from "src/types/creatures";
+    import { t } from "src/utils/i18n";
     import { createEventDispatcher } from "svelte";
     
     const dispatch = createEventDispatcher();
@@ -24,8 +25,8 @@
 <div class="tag">
     <span
         aria-label-classes="initiative-tracker-condition-tooltip"
-        aria-label={status.description?.length ? status.description : null}
-        >{status.name}</span
+        aria-label={status.description?.length ? t(status.description) : null}
+        >{t(status.name)}</span
     >
     {#if status.hasAmount}
         <div class="amount">
