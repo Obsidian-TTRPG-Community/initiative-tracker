@@ -1,3 +1,4 @@
+import { t } from "src/utils/i18n";
 import { RpgSystem } from "./rpgSystem";
 import { crToString, getFromCreatureOrBestiary } from "..";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
@@ -68,7 +69,7 @@ export class Pathfinder2eRpgSystem extends RpgSystem {
     constructor(plugin: InitiativeTracker) {
         super();
         this.plugin = plugin;
-        this.displayName = "Pathfinder 2e";
+        this.displayName = t("Pathfinder 2e");
     }
 
     getCreatureDifficulty(
@@ -130,12 +131,12 @@ export class Pathfinder2eRpgSystem extends RpgSystem {
 
         const thresholdSummary = thresholds
             .map(
-                (threshold) => `${threshold.displayName}: ${threshold.minValue}`
+                (threshold) => `${t(threshold.displayName)}: ${threshold.minValue}`
             )
             .join("\n");
-        const summary = `Encounter is ${displayName}
-    Total XP: ${creatureXp}
-    Threshold
+        const summary = `${t("Encounter is")} ${t(displayName)}
+    ${t("Total XP")}: ${creatureXp}
+    ${t("Threshold")}
     ${thresholdSummary}`;
 
         return {
@@ -145,8 +146,8 @@ export class Pathfinder2eRpgSystem extends RpgSystem {
                 PF2E_DND5E_DIFFICULTY_MAPPING[displayName.toLowerCase()] ??
                 "trivial",
             value: creatureXp,
-            title: "Total XP",
-            intermediateValues: [{ label: "Total XP", value: creatureXp }]
+            title: t("Total XP"),
+            intermediateValues: [{ label: t("Total XP"), value: creatureXp }]
         };
     }
 }

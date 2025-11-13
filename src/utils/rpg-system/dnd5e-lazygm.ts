@@ -1,3 +1,4 @@
+import { t } from "src/utils/i18n";
 import type InitiativeTracker from "src/main";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
 import {
@@ -21,8 +22,8 @@ export class Dnd5eLazyGmRpgSystem extends RpgSystem {
     constructor(plugin: InitiativeTracker) {
         super();
         this.plugin = plugin;
-        this.valueUnit = "CR";
-        this.displayName = "DnD 5e Lazy GM";
+        this.valueUnit = t("CR");
+        this.displayName = t("DnD 5e Lazy GM");
         this.dnd5eRpgSystem = new Dnd5eRpgSystem(plugin);
     }
 
@@ -71,24 +72,24 @@ export class Dnd5eLazyGmRpgSystem extends RpgSystem {
             0
         );
 
-        const summary = `Encounter is ${displayName}
-Total XP: ${xp}
-Total CR: ${crSum}
-Total levels: ${playerLevels.reduce((acc, lv) => acc + lv, 0)}
-Deadly Threshold: ${deadlyThreshold}`;
+        const summary = `${t("Encounter is")} ${t(displayName)}
+${t("Total XP")}: ${xp}
+${t("Total CR")}: ${crSum}
+${t("Total levels")}: ${playerLevels.reduce((acc, lv) => acc + lv, 0)}
+${t("Deadly Threshold")}: ${deadlyThreshold}`;
 
         return {
             displayName,
             summary,
             cssClass: displayName == "Deadly" ? "deadly" : "easy",
             value: crSum,
-            title: "Total CR",
-            intermediateValues: [{ label: "Total XP", value: xp }]
+            title: t("Total CR"),
+            intermediateValues: [{ label: t("Total XP"), value: xp }]
         };
     }
 
     formatDifficultyValue(value: number, withUnits?: boolean): string {
         if (!value) return DEFAULT_UNDEFINED;
-        return crToString(value) + (withUnits ? " CR" : "");
+        return crToString(value) + (withUnits ? ` ${t("CR")}` : "");
     }
 }

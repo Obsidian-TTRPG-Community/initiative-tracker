@@ -3,6 +3,7 @@
     import { cubicOut } from "svelte/easing";
     import { getContext } from "svelte";
     import { getRpgSystem } from "src/utils";
+    import { t } from "src/utils/i18n";
     import type { RpgSystem } from "src/utils/rpg-system/rpgSystem";
     import type InitiativeTracker from "src/main";
 
@@ -32,7 +33,7 @@
 </script>
 
 <div class="difficulty-bar-container" aria-label={summary}>
-    <span>{$dif.labels?.[0] ?? ""}</span>
+    <span>{t($dif.labels?.[0]) ?? ""}</span>
     <span
         ><meter
             class="difficulty-bar"
@@ -43,7 +44,7 @@
             value={$difficultyBar}
         /></span
     >
-    <span>{$dif.labels?.last() ?? ""}</span>
+    <span>{t($dif.labels?.last()) ?? ""}</span>
 </div>
 
 <style>

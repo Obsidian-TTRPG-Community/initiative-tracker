@@ -3,6 +3,7 @@
     import { tracker } from "../stores/tracker";
     import Difficulty from "./Difficulty.svelte";
     import { getRpgSystem } from "src/utils";
+    import { t } from "src/utils/i18n";
 
     const { state, name, round, party, difficulty } = tracker;
 
@@ -33,7 +34,7 @@
         <div class="initiative-tracker-round-container">
             <small>
                 <em>
-                    Round {$round}
+                    {t("Round")} {$round}
                 </em>
             </small>
         </div>
