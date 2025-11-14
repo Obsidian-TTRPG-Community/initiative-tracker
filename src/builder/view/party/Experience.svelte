@@ -2,6 +2,7 @@
     import { encounter } from "../../stores/encounter";
     import { players } from "../../stores/players";
     import { RpgSystemSetting, getRpgSystem } from "src/utils";
+    import { t } from "src/utils/i18n";
     import { getContext } from "svelte";
     import Collapsible from "./Collapsible.svelte";
 
@@ -36,7 +37,7 @@
             (plugin.data.builder.showXP = !plugin.data.builder.showXP)}
     >
         <div class="title-container" slot="title">
-            <h5 class="title">Experience</h5>
+            <h5 class="title">{t("Experience")}</h5>
             <span>
                 {#if plugin.data.rpgSystem != RpgSystemSetting.Dnd5e}
                     ({rpgSystem.displayName})
@@ -44,9 +45,10 @@
             </span>
             {#if filtered > 0}
                 <span class="filtered"
-                    >Filtering {filtered} allied creature{filtered > 1
-                        ? "s"
-                        : ""}</span
+                    >{t("Filtering %d allied creature%s")
+                        .replace('%d', filtered)
+                        .replaceAll('%s', filtered > 1 ? "s" : "")
+                    }</span
                 >
             {/if}
         </div>
@@ -54,8 +56,8 @@
             <div class="xp">
                 <div class="encounter-difficulty">
                     <div class="difficulty container">
-                        <strong class="header">Difficulty</strong>
-                        <span>{difficulty.displayName}</span>
+                        <strong class="header">{t("Difficulty")}</strong>
+                        <span>{t(difficulty.displayName)}</span>
                     </div>
                     {#each difficulty.intermediateValues as intermediate}
                         <div class="adjusted container">
@@ -78,7 +80,7 @@
                             class="experience-threshold {budget.displayName.toLowerCase()} container"
                         >
                             <strong class="experience-name header">
-                                {budget.displayName}
+                                {t(budget.displayName)}
                             </strong>
                             <span class="experience-amount">
                                 {rpgSystem.formatDifficultyValue(

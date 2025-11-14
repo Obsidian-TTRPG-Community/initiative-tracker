@@ -5,6 +5,7 @@
     import { Menu, Notice, setIcon } from "obsidian";
     import Pagination from "./Pagination.svelte";
     import type { BuiltFilterStore } from "../../stores/filter/filter";
+    import { t } from "src/utils/i18n";
 
     import type { BuiltTableStore } from "../../stores/table/table";
     import { HeadersModal } from "src/builder/stores/table/headers-modal";
@@ -32,18 +33,18 @@
     const settingsMenu = (evt: CustomEvent<MouseEvent>) => {
         const menu = new Menu();
         menu.addItem((item) => {
-            item.setTitle("Edit Headers").onClick(() => {
+            item.setTitle(t("Edit Headers")).onClick(() => {
                 openHeadersModal();
             });
         })
             .addItem((item) => {
-                item.setTitle("Edit Filters").onClick(() => {
+                item.setTitle(t("Edit Filters")).onClick(() => {
                     openFiltersModal();
                 });
             })
             .addSeparator()
             .addItem((item) => {
-                item.setTitle("Export").onClick(() => {
+                item.setTitle(t("Export")).onClick(() => {
                     const link = createEl("a");
                     const file = new Blob(
                         [JSON.stringify(plugin.data.builder)],
@@ -58,7 +59,7 @@
                 });
             })
             .addItem((item) => {
-                item.setTitle("Import").onClick(() => {
+                item.setTitle(t("Import")).onClick(() => {
                     //validate;
                     const ajv = new Ajv();
 
@@ -85,7 +86,7 @@
                                     json = JSON.parse(event.target.result);
                                 } catch (e) {
                                     new Notice(
-                                        "There was an issue parsing the file as JSON."
+                                        t("There was an issue parsing the file as JSON.")
                                     );
                                 }
                                 if (validate(json)) {
@@ -97,7 +98,7 @@
                                         ...validate.errors.map((e) => e.message)
                                     );
                                     new Notice(
-                                        "This file does not match the builder state schema."
+                                        t("This file does not match the builder state schema.")
                                     );
                                 }
                             }
@@ -148,7 +149,7 @@
                     }}
                 >
                     <div class="table-header">
-                        <span class="table-header-content">{header.text}</span>
+                        <span class="table-header-content">{t(header.text)}</span>
                         {#if header.active}
                             {#if $sortDir}
                                 <div class="has-icon" use:sortUp />

@@ -6,6 +6,7 @@
     import Nullable from "../Nullable.svelte";
     import { convertFraction, DEFAULT_UNDEFINED } from "src/utils";
     import { Creature as CreatureCreator } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
     import type { createTable } from "src/builder/stores/table/table";
     import type InitiativeTracker from "src/main";
 
@@ -88,14 +89,14 @@
                     <div
                         class="contains-icon"
                         use:baby
-                        aria-label={"This creature is significantly under the average party level and might not contribute much to the fight."}
+                        aria-label={t("This creature is significantly under the average party level and might not contribute much to the fight.")}
                     />
                 {/if}
                 {#if challenge}
                     <div
                         class="contains-icon"
                         use:skull
-                        aria-label={"This creature is significantly over the average party level and might prove a challenge."}
+                        aria-label={t("This creature is significantly over the average party level and might prove a challenge.")}
                     />
                 {/if}
             </div>

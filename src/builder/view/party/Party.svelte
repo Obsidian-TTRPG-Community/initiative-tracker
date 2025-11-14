@@ -3,6 +3,7 @@
 
     import { getContext } from "svelte";
     import { DISABLE, ENABLE } from "src/utils";
+    import { t } from "src/utils/i18n";
 
     import { players } from "../../stores/players";
     import Experience from "./Experience.svelte";
@@ -29,9 +30,9 @@
     });
 
     const partyDropdown = (node: HTMLElement) => {
-        new Setting(node).setName("Select a party").addDropdown((dropdown) => {
+        new Setting(node).setName(t("Select a party")).addDropdown((dropdown) => {
             dropdown
-                .addOption("none", "None")
+                .addOption("none", t("None"))
                 .addOptions(
                     Object.fromEntries(parties.map((p) => [p.name, p.name]))
                 )
@@ -89,7 +90,7 @@
         on:toggle={() =>
             (plugin.data.builder.showParty = !plugin.data.builder.showParty)}
     >
-        <h5 class="player-header" slot="title">Players</h5>
+        <h5 class="player-header" slot="title">{t("Players")}</h5>
         <div slot="content">
             <div class="party">
                 {#if parties.length}
@@ -106,8 +107,8 @@
                             <div
                                 class="clickable-icon setting-editor-extra-setting-button"
                                 aria-label={player.enabled
-                                    ? "Disable"
-                                    : "Enable"}
+                                    ? t("Disable")
+                                    : t("Enable")}
                                 on:click={() => players.toggleEnabled(player)}
                             >
                                 {#if player.enabled}
@@ -131,10 +132,10 @@
                                 )}
                             min="1"
                         />
-                        <span>Player(s)</span>
+                        <span>{t("Player(s)")}</span>
                         <div use:crossIcon />
 
-                        <span>Level</span>
+                        <span>{t("Level")}</span>
                         <input
                             type="number"
                             value={player.level}
@@ -149,8 +150,8 @@
                             <div
                                 class="clickable-icon setting-editor-extra-setting-button"
                                 aria-label={player.enabled
-                                    ? "Disable"
-                                    : "Enable"}
+                                    ? t("Disable")
+                                    : t("Enable")}
                                 on:click={() => players.toggleEnabled(player)}
                             >
                                 {#if player.enabled}

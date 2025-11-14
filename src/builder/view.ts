@@ -1,6 +1,7 @@
 import { ItemView, type ViewStateResult, WorkspaceLeaf } from "obsidian";
 import type InitiativeTracker from "src/main";
 import { BUILDER_VIEW } from "../utils";
+import { t } from "src/utils/i18n";
 
 import Builder from "./view/Builder.svelte";
 import { encounter } from "./stores/encounter";
@@ -72,7 +73,7 @@ export default class BuilderView extends ItemView {
         this.ui?.$destroy();
     }
     getDisplayText(): string {
-        return "Encounter Builder";
+        return t("Encounter Builder");
     }
     getIcon(): string {
         return BUILDER_VIEW;

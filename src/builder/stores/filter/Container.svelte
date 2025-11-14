@@ -10,6 +10,7 @@
     import { ButtonComponent, Setting } from "obsidian";
     import copy from "fast-copy";
     import { getId } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
 
     export let filterStore: BuiltFilterStore;
     const { layout, filters } = filterStore;
@@ -29,7 +30,7 @@
 
     const reset = (node: HTMLElement) => {
         new Setting(node)
-            .setName("Restore Default Layout")
+            .setName(t("Restore Default Layout"))
             .addExtraButton((b) => {
                 b.setIcon("reset").onClick(() => {
                     filterStore.resetLayout(true);
@@ -37,13 +38,14 @@
             });
     };
     const add = (node: HTMLElement) => {
-        new Setting(node).setName("Add New Filter").addExtraButton((b) => {
+        new Setting(node).setName(t("Add New Filter")).addExtraButton((b) => {
             b.setIcon("plus-circle").onClick(() => {
                 const id = getId();
                 const filter = {
                     ...DEFAULT_NEW_FILTER,
                     id
                 };
+                t(filter.text)
                 copied.push({
                     type: "nested",
                     id: getId(),
@@ -59,7 +61,7 @@
         });
     };
     const cancel = (node: HTMLElement) => {
-        new ButtonComponent(node).setButtonText("Cancel").setCta();
+        new ButtonComponent(node).setButtonText(t("Cancel")).setCta();
     };
 </script>
 

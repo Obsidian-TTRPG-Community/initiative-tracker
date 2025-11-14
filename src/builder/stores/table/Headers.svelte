@@ -5,6 +5,7 @@
     import { ButtonComponent, Setting, setIcon } from "obsidian";
     import { createEventDispatcher } from "svelte";
     import { SORT_NUMBER, SORT_STRING } from "src/utils";
+    import { t } from "src/utils/i18n";
     import { EditModal } from "./edit-modal";
     import { getId } from "src/utils/creature";
     import {
@@ -73,7 +74,7 @@
                 createFragment((e) => {
                     const desc = e.createDiv("header-desc");
                     setIcon(desc.createDiv(), icon(NAME_HEADER.type));
-                    desc.createSpan({ text: NAME_HEADER.text });
+                    desc.createSpan({ text: t(NAME_HEADER.text) });
                 })
             )
             .setDesc(
@@ -89,7 +90,7 @@
                 createFragment((e) => {
                     const desc = e.createDiv("header-desc");
                     setIcon(desc.createDiv(), icon(header.type));
-                    desc.createSpan({ text: header.text });
+                    desc.createSpan({ text: t(header.text) });
                 })
             )
             .setDesc(
@@ -123,7 +124,7 @@
             );
     };
     const add = (node: HTMLElement) => {
-        new Setting(node).setName("Add Header").addExtraButton((b) =>
+        new Setting(node).setName(t("Add Header")).addExtraButton((b) =>
             b.setIcon("plus-circle").onClick(async () => {
                 const state = await openModal();
                 if (
@@ -143,8 +144,8 @@
     };
     const reset = (node: HTMLElement) => {
         new Setting(node)
-            .setName("Reset Headers")
-            .setDesc("Reset table headers to defaults.")
+            .setName(t("Reset Headers"))
+            .setDesc(t("Reset table headers to defaults."))
             .addExtraButton((b) =>
                 b.setIcon("reset").onClick(() => {
                     dispatch("reset");
@@ -152,7 +153,7 @@
             );
     };
     const cancel = (node: HTMLElement) => {
-        new ButtonComponent(node).setButtonText("Cancel").setCta();
+        new ButtonComponent(node).setButtonText(t("Cancel")).setCta();
     };
 </script>
 
@@ -162,7 +163,7 @@
 
 <p>
     <small>
-        Organize your headers here. Headers can be drag-and-dropped!
+        {t("Organize your headers here. Headers can be drag-and-dropped!")}
     </small>
 </p>
 <div class="header-container">
