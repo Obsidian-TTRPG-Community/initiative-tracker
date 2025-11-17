@@ -4,12 +4,13 @@
 
     import { createEventDispatcher, getContext } from "svelte";
     import { tracker } from "../stores/tracker";
+    import { t } from "src/utils/i18n";
 
     const dispatch = createEventDispatcher();
     const plugin = getContext<InitiativeTracker>("plugin");
 
     const cancel = (node: HTMLElement) => {
-        new ExtraButtonComponent(node).setIcon("cross").setTooltip("Cancel");
+        new ExtraButtonComponent(node).setIcon("cross").setTooltip(t("Cancel"));
     };
 
     $: encounters = plugin.data.encounters;
@@ -17,7 +18,7 @@
     const load = (node: HTMLElement, encounter: string) => {
         new ExtraButtonComponent(node)
             .setIcon("open-elsewhere-glyph")
-            .setTooltip("Load Encounter")
+            .setTooltip(t("Load Encounter"))
             .onClick(() => {
                 tracker.new(plugin, encounters[encounter]);
                 dispatch("cancel");
@@ -26,7 +27,7 @@
     const trash = (node: HTMLElement, encounter: string) => {
         new ExtraButtonComponent(node)
             .setIcon("trash")
-            .setTooltip("Delete Encounter")
+            .setTooltip(t("Delete Encounter"))
             .onClick(() => {
                 plugin.removeEncounter(encounter);
                 encounters = plugin.data.encounters;
@@ -36,13 +37,13 @@
 
 <div class="loading-container">
     <div class="controls">
-        <h4>Load An Encounter</h4>
+        <h4>{t("Load An Encounter")}</h4>
         <div use:cancel on:click={() => dispatch("cancel")} />
     </div>
     <div class="encounter-container">
         {#if !encounters || !Object.keys(encounters)?.length}
             <span class="no-encounters">
-                <em>There are no saved encounters.</em>
+                <em>{t("There are no saved encounters.")}</em>
             </span>
         {/if}
         {#each Object.keys(encounters) as encounter (encounter)}

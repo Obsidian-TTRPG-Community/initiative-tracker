@@ -51,7 +51,7 @@
         if (!Array.isArray(source)) return source;
         let sliced = source.slice(0, 2);
         if (source.length > 2) {
-            sliced.push(`and ${source.length - 2} more`);
+            sliced.push(`${t("and")} ${source.length - 2} ${t("more")}`);
         }
 
         return stringify(sliced, 0, ", ", false);

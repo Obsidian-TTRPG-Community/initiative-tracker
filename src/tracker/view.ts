@@ -44,7 +44,7 @@ export default class TrackerView extends ItemView {
         return INITIATIVE_TRACKER_VIEW;
     }
     getDisplayText() {
-        return "Initiative Tracker";
+        return t("Initiative Tracker");
     }
     getIcon() {
         return BASE;

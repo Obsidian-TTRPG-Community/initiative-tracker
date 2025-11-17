@@ -3,6 +3,7 @@ import type InitiativeTracker from "../main";
 import { tracker } from "../tracker/stores/tracker";
 import { type HomebrewCreature } from "src/types/creatures";
 import { Creature } from "src/utils/creature";
+import { t } from "src/utils/i18n";
 
 declare module "obsidian" {
     interface Workspace {
@@ -56,7 +57,7 @@ export class API {
         rollHP: boolean = this.plugin.data.rollHP
     ) {
         if (!creatures || !Array.isArray(creatures) || !creatures.length) {
-            throw new Error("Creatures must be an array.");
+            throw new Error(t("Creatures must be an array."));
         }
         this.#tracker.add(
             this.plugin,

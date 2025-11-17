@@ -11,6 +11,7 @@
     import { DICE } from "src/utils";
     import { SRDMonsterSuggestionModal } from "src/utils/suggester";
     import { Creature } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
     import type InitiativeTracker from "src/main";
 
     import { tracker } from "src/tracker/stores/tracker";
@@ -23,7 +24,7 @@
 
     const add = async (close = true) => {
         if (!creature || !creature.name || !creature.name?.length) {
-            new Notice("Enter a name!");
+            new Notice(t("Enter a name!"));
             return;
         }
         if (!creature.modifier) {
@@ -49,12 +50,12 @@
 
     const addButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setTooltip("Add Creature")
+            .setTooltip(t("Add Creature"))
             .setIcon("check");
     };
     const editButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setTooltip("Add and Close")
+            .setTooltip(t("Add and Close"))
             .setIcon("check-circle");
     };
     const cancelButton = (node: HTMLElement) => {
@@ -63,7 +64,7 @@
     const diceButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon(DICE)
-            .setTooltip("Roll Initiative")
+            .setTooltip(t("Roll Initiative"))
             .onClick(async () => {
                 creature.initiative = await plugin.getInitiativeValue(
                     creature.modifier
@@ -95,7 +96,7 @@
 <div class="initiative-tracker-editor">
     <div class="create-new">
         <div>
-            <label for="add-name">Creature</label>
+            <label for="add-name">{t("Creature")}</label>
             <input
                 bind:this={nameInput}
                 bind:value={creature.name}
@@ -109,7 +110,7 @@
             />
         </div>
         <div>
-            <label for="add-display">Display Name</label>
+            <label for="add-display">{t("Display Name")}</label>
             <input
                 bind:value={creature.display}
                 id="add-display"
@@ -119,7 +120,7 @@
             />
         </div>
         <div>
-            <label for="add-hp">HP</label>
+            <label for="add-hp">{t("HP")}</label>
             <input
                 bind:value={creature.hp}
                 id="add-hp"
@@ -129,7 +130,7 @@
             />
         </div>
         <div>
-            <label for="add-ac">AC</label>
+            <label for="add-ac">{t("AC")}</label>
             <input
                 bind:value={creature.ac}
                 id="add-ac"
@@ -138,7 +139,7 @@
             />
         </div>
         <div>
-            <label for="add-mod">Modifier</label>
+            <label for="add-mod">{t("Modifier")}</label>
             <input
                 bind:value={creature.modifier}
                 id="add-mod"
@@ -149,7 +150,7 @@
         </div>
 
         <div class="initiative">
-            <label for="add-init">Initiative</label>
+            <label for="add-init">{t("Initiative")}</label>
             <input
                 bind:value={creature.initiative}
                 id="add-init"
@@ -161,12 +162,12 @@
         </div>
 
         <div>
-            <label for="add-mod">Hidden</label>
+            <label for="add-mod">{t("Hidden")}</label>
             <div use:hideToggle />
         </div>
 
         <div class="amount">
-            <label for="add-init">Amount</label>
+            <label for="add-init">{t("Amount")}</label>
             <input
                 bind:value={amount}
                 id="add-init"

@@ -1,6 +1,7 @@
 import { App, ButtonComponent, Modal } from "obsidian";
 import type InitiativeTracker from "src/main";
 import type { Creature } from "src/utils/creature";
+import { t } from "src/utils/i18n";
 import Creator from "./Creator.svelte";
 export class AddCreatureModal extends Modal {
     constructor(public plugin: InitiativeTracker, public creature?: Creature) {
@@ -24,8 +25,8 @@ export async function confirmWithModal(
     app: App,
     text: string,
     buttons: { cta: string; secondary: string } = {
-        cta: "Yes",
-        secondary: "No"
+        cta: t("Yes"),
+        secondary: t("No")
     }
 ): Promise<boolean> {
     return new Promise((resolve, reject) => {

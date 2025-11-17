@@ -16,7 +16,7 @@ import {
     INITIATIVE_TRACKER_VIEW,
     registerIcons
 } from "./utils";
-import { initI18n } from "./utils/i18n";
+import { initI18n, t } from "./utils/i18n";
 
 import { PLAYER_VIEW_VIEW } from "./utils/constants";
 import type { InitiativeTrackerData } from "./settings/settings.types";
@@ -53,7 +53,7 @@ export default class InitiativeTracker extends Plugin {
         if (window.DiceRoller != null) {
             if (!window.DiceRoller.getRoller) {
                 new Notice(
-                    "Please update Dice Roller to the latest version to use with Initiative Tracker."
+                    t("Please update Dice Roller to the latest version to use with Initiative Tracker.")
                 );
             } else {
                 return true;
@@ -130,7 +130,7 @@ export default class InitiativeTracker extends Plugin {
     registerCommand(encounter: string) {
         this.addCommand({
             id: `start-${encounter}`,
-            name: `Start ${encounter}`,
+            name: `${t("Start")} ${encounter}`,
             checkCallback: (checking) => {
                 // checking if the command should appear in the Command Palette
                 if (checking) {
@@ -259,7 +259,7 @@ export default class InitiativeTracker extends Plugin {
             ) {
                 el.addClasses(["waiting-for-bestiary", "is-loading"]);
                 const loading = el.createEl("p", {
-                    text: "Waiting for Fantasy Statblocks Bestiary..."
+                    text: t("Waiting for Fantasy Statblocks Bestiary...")
                 });
                 const unload = window["FantasyStatblocks"].onResolved(() => {
                     el.removeClasses(["waiting-for-bestiary", "is-loading"]);
@@ -282,7 +282,7 @@ export default class InitiativeTracker extends Plugin {
                 ) {
                     el.addClasses(["waiting-for-bestiary", "is-loading"]);
                     const loading = el.createEl("p", {
-                        text: "Waiting for Fantasy Statblocks Bestiary..."
+                        text: t("Waiting for Fantasy Statblocks Bestiary...")
                     });
                     const unload = window["FantasyStatblocks"].onResolved(
                         () => {
@@ -326,7 +326,7 @@ export default class InitiativeTracker extends Plugin {
 
                 const buildEncounter = async () => {
                     const definitions = code.innerText.replace(
-                        `encounter:`,
+                        `${("encounter:")}`,
                         ""
                     );
 
@@ -339,7 +339,7 @@ export default class InitiativeTracker extends Plugin {
                         !parsed.creatures ||
                         !parsed.creatures.size
                     ) {
-                        target.setText("No creatures found.");
+                        target.setText(t("No creatures found."));
                         return;
                     }
                     new EncounterLine({
@@ -369,7 +369,7 @@ export default class InitiativeTracker extends Plugin {
                         "loader-2"
                     );
                     loading.createEl("em", {
-                        text: "Loading Bestiary..."
+                        text: t("Loading Bestiary...")
                     });
                     const unload = window["FantasyStatblocks"].onResolved(
                         () => {
@@ -407,7 +407,7 @@ export default class InitiativeTracker extends Plugin {
                     !this.app.metadataCache.getFileCache(file)?.frontmatter
                 ) {
                     new Notice(
-                        `Initiative Tracker: There was an issue with the linked note for ${player.name}.\n\nPlease re-link it in settings.`
+                        `${t("Initiative Tracker: There was an issue with the linked note for %s.\n\nPlease re-link it in settings.").replace('%s', player.name)}`
                     );
                     continue;
                 }
@@ -481,13 +481,13 @@ export default class InitiativeTracker extends Plugin {
             );
         });
 
-        console.log("Initiative Tracker v" + this.manifest.version + " loaded");
+        console.log(t("Initiative Tracker v%d loaded").replace("%d", this.manifest.version));
     }
 
     addCommands() {
         this.addCommand({
             id: "open-tracker",
-            name: "Open Initiative Tracker",
+            name: t("Open Initiative Tracker"),
             checkCallback: (checking) => {
                 if (!this.view) {
                     if (!checking) {
@@ -499,7 +499,7 @@ export default class InitiativeTracker extends Plugin {
         });
         this.addCommand({
             id: "open-builder",
-            name: "Open Encounter Builder",
+            name: t("Open Encounter Builder"),
             checkCallback: (checking) => {
                 if (!this.builder) {
                     if (!checking) {
@@ -512,7 +512,7 @@ export default class InitiativeTracker extends Plugin {
 
         this.addCommand({
             id: "toggle-encounter",
-            name: "Toggle Encounter",
+            name: t("Toggle Encounter"),
             checkCallback: (checking) => {
                 const view = this.view;
                 if (view) {
@@ -526,7 +526,7 @@ export default class InitiativeTracker extends Plugin {
 
         this.addCommand({
             id: "next-combatant",
-            name: "Next Combatant",
+            name: t("Next Combatant"),
             checkCallback: (checking) => {
                 const view = this.view;
                 if (view && tracker.getState()) {
@@ -540,7 +540,7 @@ export default class InitiativeTracker extends Plugin {
 
         this.addCommand({
             id: "prev-combatant",
-            name: "Previous Combatant",
+            name: t("Previous Combatant"),
             checkCallback: (checking) => {
                 const view = this.view;
                 if (view && tracker.getState()) {
@@ -598,12 +598,12 @@ export default class InitiativeTracker extends Plugin {
                             this.app.workspace.revealLeaf(view.leaf);
                         } else {
                             new Notice(
-                                "Could not find the Initiative Tracker. Try reloading the note!"
+                                t("Could not find the Initiative Tracker. Try reloading the note!")
                             );
                         }
                     } catch (e) {
                         new Notice(
-                            "There was an issue launching the encounter.\n\n" +
+                            t("There was an issue launching the encounter.\n\n") +
                                 (e as Error).message
                         );
                         console.error(e);
@@ -617,7 +617,7 @@ export default class InitiativeTracker extends Plugin {
     async onunload() {
         await this.saveSettings();
         this.app.workspace.trigger("initiative-tracker:unloaded");
-        console.log("Initiative Tracker unloaded");
+        console.log(t("Initiative Tracker unloaded"));
     }
 
     async addTrackerView() {
@@ -735,7 +735,7 @@ export default class InitiativeTracker extends Plugin {
         if (this.data.builder.sidebarIcon) {
             this._builderIcon = this.addRibbonIcon(
                 BUILDER_VIEW,
-                "Initiative Tracker Encounter Builder",
+                t("Initiative Tracker Encounter Builder"),
                 () => {
                     this.addBuilderView();
                 }

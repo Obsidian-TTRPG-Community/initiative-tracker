@@ -1,11 +1,12 @@
 <script lang="ts">
     import type { RangeFilterStore } from "src/builder/stores/filter/filter";
+    import { t } from "src/utils/i18n";
     import Slider from "./Slider.svelte";
 
     export let filter: RangeFilterStore;
 
-    $: min = `Min ${filter.filter.text}`;
-    $: max = `Max ${filter.filter.text}`;
+    $: min = `${t("Min %s").replace("%s", t(filter.filter.text))}`;
+    $: max = `${t("Max %s").replace("%s", t(filter.filter.text))}`;
 </script>
 
 <div class="range-filter">
