@@ -83,7 +83,7 @@ export class Pathfinder2eRpgSystem extends RpgSystem {
             ?.toString()
             .split(" ")
             .slice(-1);
-        if (lvl == null || lvl == undefined) return 0;
+        if (lvl == null || lvl == undefined) return creature.xp ?? 0;
         const partyLvl = Math.round(
             playerLevels?.length ?? 0 > 0
                 ? playerLevels.reduce((a, b) => a + b) / playerLevels.length
