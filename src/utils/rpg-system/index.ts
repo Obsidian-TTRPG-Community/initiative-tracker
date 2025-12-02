@@ -6,7 +6,7 @@ import { Dnd5eLazyGmRpgSystem } from "./dnd5e-lazygm";
 import { Dnd5eCr2SimpleRpgSystem } from "./dnd5e-cr2-simple";
 import { Dnd5eFleeMortalsRpgSystem } from "./dnd5e-flee-mortals";
 import { Pathfinder2eRpgSystem } from "./pf2e"
-import { Dnd5e2024RpgSystem} from "./dnd5e-2024"
+import { Dnd5e2024RpgSystem } from "./dnd5e-2024"
 import { RpgSystem } from "./rpgSystem";
 import { DEFAULT_UNDEFINED } from "../constants";
 
