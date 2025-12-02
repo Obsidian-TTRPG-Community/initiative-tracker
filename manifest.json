@@ -1,7 +1,7 @@
 {
     "id": "initiative-tracker",
     "name": "Initiative Tracker",
-    "version": "13.1.18",
+    "version": "13.0.18",
     "minAppVersion": "0.15.0",
     "author": "Jeremy Valentine",
     "description": "TTRPG Initiative Tracker for Obsidian.md",

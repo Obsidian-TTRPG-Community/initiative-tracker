@@ -100,6 +100,10 @@ export class Dnd5eFleeMortalsRpgSystem extends RpgSystem {
   }
 
   getAveragePlayerLevel(playerLevels: number[]): number {
+    if (playerLevels.length === 0) {
+      return 1;
+    }
+
     const totalPlayerLevelClamped = playerLevels
       .filter((lvl) => lvl && lvl > 0)
       .map((lv) => Math.max(1, Math.min(lv, 20)))

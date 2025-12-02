@@ -68,7 +68,7 @@ const POWER_BY_CR: Record<string, number> = {
 const DIFFICULTY_TO_CSS: Record<string, string> = {
   "Mild": "easy",
   "Bruising": "medium",
-  "Bloddy": "medium",
+  "Bloody": "medium",
   "Brutal": "hard", 
   "Oppressive": "deadly"
 }
@@ -143,12 +143,12 @@ ${thresholdSummary}`;
     const budget: Record<string, number> = {
       mild: 0.4,
       bruising: 0.6,
-      bloddy: 0.75,
+      bloody: 0.75,
       brutal: 0.9,
       Oppressive: 1
     };
 
-    const partyPower = playerLevels.map(x => PLAYER_POWER_BY_LEVEL[x]).reduce((a, b) => a+b)
+    const partyPower = playerLevels.map(x => PLAYER_POWER_BY_LEVEL[x]).reduce((a, b) => a+b, 0)
     return Object.entries(budget)
       .map(([name, value]) => ({
         displayName: (name.charAt(0).toUpperCase() + name.slice(1)),
