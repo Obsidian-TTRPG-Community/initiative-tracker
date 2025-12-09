@@ -121,7 +121,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 href: "https://www.buymeacoffee.com/valentine195"
             }).createEl("img", {
                 attr: {
-                    src: "https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=valentine195&button_colour=e3e7ef&font_colour=262626&font_family=Inter&outline_colour=262626&coffee_colour=ff0000"
+                    src: "https://img.buymeacoffee.com/button-api/?text=" + t("Buy me a coffee") + "&emoji=☕&slug=valentine195&button_colour=e3e7ef&font_colour=262626&font_family=Inter&outline_colour=262626&coffee_colour=ff0000"
                 }
             });
         } catch (e) {
