@@ -5,6 +5,7 @@
     import { ConditionSuggestionModal } from "src/utils/suggester";
     import { getContext } from "svelte";
     import { getId } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
     import Status from "src/tracker/ui/creatures/Status.svelte";
 
     import { tracker } from "../stores/tracker";
@@ -119,13 +120,13 @@
                 <div class="hp-status">
                     {#if plugin.data.beginnerTips}
                         <small class="label">
-                            Apply damage, (-)healing, (t)temp HP, or (m)max HP
+                            {t("Apply damage, (-)healing, (t)temp HP, or (m)max HP")}
                         </small>
                     {/if}
                     <div class="input">
                         <tag
                             use:hpIcon
-                            aria-label="Apply damage, (-)healing, (t)temp HP, or (m)max HP"
+                            aria-label="{t("Apply damage, (-)healing, (t)temp HP, or (m)max HP")}"
                             style="margin: 0 0.2rem 0 0.7rem"
                         />
                         <input
@@ -155,22 +156,21 @@
                 <div class="hp-status">
                     {#if plugin.data.beginnerTips}
                         <small class="label">
-                            Apply status effect to creatures that fail their
-                            saving throw
+                            {t("Apply status effect to creatures that fail their saving throw")}
                         </small>
                     {/if}
                     <div class="input-status">
                         <div class="input">
                             <div
                                 use:tagIcon
-                                aria-label="Apply status effect to creatures that fail their saving throw"
+                                aria-label="{t("Apply status effect to creatures that fail their saving throw")}"
                                 style="margin: 0 0.2rem 0 0.7rem"
                             />
                             <div use:conditionDiv />
                         </div>
                         <div
                             use:addStatusIcon
-                            aria-label="Add Status"
+                            aria-label="{t("Add Status")}"
                             on:click={addStatus}
                             style="margin: 0rem 0.2rem 0rem 0rem"
                         />
@@ -179,7 +179,7 @@
                         <div class="status-list">
                             <div
                                 use:removeIcon
-                                aria-label="Clear status list"
+                                aria-label="{t("Clear status list")}"
                                 style="margin:0.2rem 0.2rem 0rem 0.7rem;cursor:pointer;"
                                 on:click={function (evt) {
                                     $statuses = [];
@@ -203,12 +203,12 @@
         {:else}
             <div class="hp-status">
                 {#if plugin.data.beginnerTips}
-                    <small class="label"> Set AC </small>
+                    <small class="label"> {t("Set AC")} </small>
                 {/if}
                 <div class="input">
                     <tag
                         use:acIcon
-                        aria-label="Set or (+/-)modify the AC of creatures"
+                        aria-label="{t("Set or (+/-)modify the AC of creatures")}"
                         style="margin: 0 0.2rem 0 0.7rem"
                     />
                     <input
@@ -236,11 +236,11 @@
     <div style="margin: 0.5rem">
         <table class="updating-creature-table">
             <thead class="updating-creature-table-header">
-                <th style="width:100%" class="left">Name</th>
+                <th style="width:100%" class="left">{t("Name")}</th>
                 {#if $updateTarget == "hp"}
-                    <th style="padding:0 0.2rem" class="center">Saved</th>
-                    <th style="padding:0 0.2rem" class="center">Resist</th>
-                    <th style="padding:0 0.2rem" class="center">Modifier</th>
+                    <th style="padding:0 0.2rem" class="center">{t("Saved")}</th>
+                    <th style="padding:0 0.2rem" class="center">{t("Resist")}</th>
+                    <th style="padding:0 0.2rem" class="center">{t("Modifier")}</th>
                     <th />
                 {/if}
             </thead>
@@ -314,13 +314,13 @@
             use:checkIcon
             on:click={() => performUpdate(true)}
             style="cursor:pointer"
-            aria-label="Apply"
+            aria-label="{t("Apply")}"
         />
         <span
             use:cancelIcon
             on:click={() => performUpdate(false)}
             style="cursor:pointer"
-            aria-label="Cancel"
+            aria-label="{t("Cancel")}"
         />
     </div>
 {:else}

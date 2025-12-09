@@ -1,16 +1,17 @@
 <script lang="ts">
     import Multiselect from "svelte-multiselect";
     import type { OptionsFilterStore } from "src/builder/stores/filter/filter";
+    import { t } from "src/utils/i18n";
 
     export let filter: OptionsFilterStore;
 </script>
 
 <div class="multiselect-container">
     <Multiselect
-        options={filter.options.flat()}
+        options={filter.options.flat().map((s) => t(s))}
         bind:selected={$filter}
         outerDivClass="multiselect-dropdown"
-        placeholder={filter.text}
+        placeholder={t(filter.text)}
     />
 </div>
 

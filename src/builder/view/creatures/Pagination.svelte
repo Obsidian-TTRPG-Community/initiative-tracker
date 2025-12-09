@@ -7,6 +7,7 @@
         TextComponent
     } from "obsidian";
     import { createEventDispatcher } from "svelte";
+    import { t } from "src/utils/i18n";
 
     export let slice: number;
     export let page: number;
@@ -88,7 +89,7 @@
 <div class="pagination">
     <div class="slicer">
         <div use:slicer />
-        <span>per page</span>
+        <span>{t("per page")}</span>
     </div>
     <div class="paginated-container">
         <div class="previous" use:previous />

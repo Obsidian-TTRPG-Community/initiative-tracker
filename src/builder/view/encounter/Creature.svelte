@@ -2,6 +2,7 @@
     import type { SRDMonster } from "src/types/creatures";
     import { ExtraButtonComponent, setIcon } from "obsidian";
     import { convertFraction, FRIENDLY, getRpgSystem, HIDDEN } from "src/utils";
+    import { t } from "src/utils/i18n";
     import { encounter } from "../../stores/encounter";
     import Nullable from "../Nullable.svelte";
     import { getContext } from "svelte";
@@ -73,14 +74,14 @@
             <div
                 class="contains-icon"
                 use:hideIcon
-                aria-label={`This creature is hidden.`}
+                aria-label={t(`This creature is hidden.`)}
             />
         {/if}
         {#if creature.friendly}
             <div
                 class="contains-icon"
                 use:friendIcon
-                aria-label={`This creature is an ally.`}
+                aria-label={t(`This creature is an ally.`)}
             />
         {/if}
         <strong class="encounter-creature-name" on:click={open}>
@@ -91,8 +92,8 @@
                 class="contains-icon"
                 use:baby
                 aria-label={`${
-                    count > 1 ? "These creatures are" : "This creature is"
-                } significantly under the average party level and might not contribute much to the fight.`}
+                    count > 1 ? t("These creatures are") : t("This creature is")
+                } ${t("significantly under the average party level and might not contribute much to the fight.")}`}
             />
         {/if}
         {#if challenge}
@@ -100,8 +101,8 @@
                 class="contains-icon"
                 use:skull
                 aria-label={`${
-                    count > 1 ? "These creatures are" : "This creature is"
-                } significantly over the average party level and might prove a challenge.`}
+                    count > 1 ? t("These creatures are") : t("This creature is")
+                } ${t("significantly over the average party level and might prove a challenge.")}`}
             />
         {/if}
     </div>

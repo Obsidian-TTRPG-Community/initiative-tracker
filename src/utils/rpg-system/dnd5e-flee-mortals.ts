@@ -1,3 +1,4 @@
+import { t } from "src/utils/i18n";
 import { RpgSystem } from "./rpgSystem";
 import { DEFAULT_UNDEFINED, convertFraction, crToString, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
@@ -91,8 +92,8 @@ export class Dnd5eFleeMortalsRpgSystem extends RpgSystem {
   constructor(plugin: InitiativeTracker) {
     super();
     this.plugin = plugin;
-    this.displayName = "DnD 5e Flee, Mortals!";
-    this.valueUnit = "CR";
+    this.displayName = t("DnD 5e Flee, Mortals!");
+    this.valueUnit = t("CR");
   }
 
   isMinion(creature: GenericCreature) {
@@ -175,21 +176,21 @@ export class Dnd5eFleeMortalsRpgSystem extends RpgSystem {
     let cssClass = DIFFICULY_CONVERSIONS[displayName].cssClass;
 
     if (maxCreatureCr > crCap) {
-      displayName = "Extreme (Exceeds CR cap)"
+      displayName = t("Extreme (Exceeds CR cap)")
       encounterPoints = DIFFICULY_CONVERSIONS["Extreme"].encounterPoints;
       cssClass = DIFFICULY_CONVERSIONS["Extreme"].cssClass;
     }
 
     const thresholdSummary = thresholds
-      .map(threshold => `${threshold.displayName}: ${threshold.minValue}`)
+      .map(threshold => `${t(threshold.displayName)}: ${threshold.minValue}`)
       .join("\n");
 
-    const summary = `Encounter is ${displayName}
-Total Creature CR: ${totalCreatureCr}
-Daily Encounter Points: ${encounterPoints}
-Party's CR Cap: ${crCap}
+    const summary = `${t("Encounter is")} ${t(displayName)}
+${t("Total Creature CR")}: ${totalCreatureCr}
+${t("Daily Encounter Points")}: ${encounterPoints}
+${t("Party's CR Cap")}: ${crCap}
 
-Threshold
+${t("Threshold")}
 ${thresholdSummary}`;
 
     return {
@@ -197,14 +198,14 @@ ${thresholdSummary}`;
       summary,
       cssClass: cssClass,
       value: totalCreatureCr,
-      title: "Total Creature CR",
+      title: t("Total Creature CR"),
       intermediateValues: [
         {
-          label: "Daily Encounter Points",
+          label: t("Daily Encounter Points"),
           value: encounterPoints
         },
         {
-          label: "Creature CR Cap",
+          label: t("Creature CR Cap"),
           value: crCap
         }
       ]

@@ -7,6 +7,7 @@
     } from "src/builder/stores/filter/filter";
     import { createEventDispatcher, getContext } from "svelte";
     import { EditFilterModal } from "./filters-modal";
+    import { t } from "src/utils/i18n";
 
     const dispatch = createEventDispatcher<{
         edit: null;
@@ -57,7 +58,7 @@
     <div class="filter">
         <div class="name-container">
             <div class="icon" use:getIcon />
-            <div class="text"><span>{filter.text}</span></div>
+            <div class="text"><span>{t(filter.text)}</span></div>
         </div>
         <div>
             <small
@@ -69,7 +70,7 @@
                         {filter.fields.join(", ")}
                     {:else}
                         <div use:warn class="warning-icon icon" />
-                        <span class="warning-icon">No fields</span>
+                        <span class="warning-icon">{t("No fields")}</span>
                     {/if}
                 </em>
             </small>

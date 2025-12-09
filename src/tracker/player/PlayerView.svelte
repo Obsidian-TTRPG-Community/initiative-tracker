@@ -4,6 +4,7 @@
     import { SyncLoader } from "svelte-loading-spinners";
 
     import { AC, FRIENDLY, HP, INITIATIVE } from "src/utils";
+    import { t } from "src/utils/i18n";
     import type { Creature } from "src/utils/creature";
     import { createEventDispatcher } from "svelte";
 
@@ -52,9 +53,9 @@
 <table class="initiative-tracker-table" transition:fade>
     <thead class="tracker-table-header">
         <th style="width:5%"><strong use:iniIcon /></th>
-        <th class="left" style="width:30%"><strong>Name</strong></th>
+        <th class="left" style="width:30%"><strong>{t("Name")}</strong></th>
         <th style="width:15%" class="center"><strong use:hpIcon /></th>
-        <th><strong> Statuses </strong></th>
+        <th><strong> {t("Statuses")} </strong></th>
     </thead>
     <tbody>
         {#each activeAndVisible as creature (creature.id)}
@@ -65,7 +66,7 @@
                         <div
                             class="contains-icon"
                             use:friendIcon
-                            aria-label={`This creature is an ally.`}
+                            aria-label={t(`This creature is an ally.`)}
                         />
                     {/if}
                     {name(creature)}
@@ -77,11 +78,11 @@
                     {#if creature.player && $data.diplayPlayerHPValues}
                         <div class="center">{@html creature.hpDisplay}</div>
                     {:else}
-                        <span>{getHpStatus(creature.hp, creature.max)}</span>
+                        <span>{t(getHpStatus(creature.hp, creature.max))}</span>
                     {/if}
                 </td>
                 <td class="center">
-                    {[...creature.status].map((s) => s.name).join(", ")}
+                    {[...creature.status].map((s) => t(s.name)).join(", ")}
                 </td>
             </tr>
         {/each}

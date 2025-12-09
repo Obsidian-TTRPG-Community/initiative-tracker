@@ -13,6 +13,7 @@
 
     import { encounter } from "../../stores/encounter";
     import { START_ENCOUNTER } from "src/utils";
+    import { t } from "src/utils/i18n";
     import { getContext } from "svelte";
     import { tracker } from "src/tracker/stores/tracker";
     import type { CreatureState, SRDMonster } from "src/types/creatures";
@@ -94,7 +95,7 @@
                 startIcon.setTooltip("");
             } else {
                 startIcon.setDisabled(false);
-                startIcon.setTooltip("Start Encounter");
+                startIcon.setTooltip(t("Start Encounter"));
             }
         }
     }
@@ -108,12 +109,12 @@
     $: saveButton?.setDisabled($encounter.size == 0);
     const save = () => {
         const modal = new Modal(app);
-        modal.titleEl.setText("Save Encounter");
+        modal.titleEl.setText(t("Save Encounter"));
         let encName: string =
             $name != "Encounter"
-                ? $name
-                : `Encounter ${Object.keys(plugin.data.encounters).length}`;
-        new Setting(modal.contentEl).setName("Encounter Name").addText((t) => {
+                ? t($name)
+                : `${t("Encounter")} ${Object.keys(plugin.data.encounters).length}`;
+        new Setting(modal.contentEl).setName(t("Encounter Name")).addText((t) => {
             t.setPlaceholder(encName).onChange((v) => (encName = v));
         });
 
@@ -140,23 +141,23 @@
                     timestamp: Date.now()
                 });
                 plugin.saveSettings();
-                new Notice(`Encounter "${encName}" saved.`);
+                new Notice(`${t("Encounter")} "${encName}" ${t("saved.")}`);
                 modal.close();
             } catch (e) {
-                new Notice("There was an issue saving the encounter.");
+                new Notice(t("There was an issue saving the encounter."));
             }
         };
         new Setting(modal.contentEl).addButton((b) =>
-            b.setButtonText("Save").onClick(() => {
+            b.setButtonText(t("Save")).onClick(() => {
                 if (encName in plugin.data.encounters) {
                     const confirm = new Modal(app);
-                    confirm.titleEl.setText("Are you sure?");
+                    confirm.titleEl.setText(t("Are you sure?"));
                     confirm.contentEl.createEl("p", {
-                        text: "This will overwrite an existing encounter. Are you sure?"
+                        text: t("This will overwrite an existing encounter. Are you sure?")
                     });
                     new Setting(confirm.contentEl)
                         .addButton((b) =>
-                            b.setButtonText("Overwrite").onClick(() => {
+                            b.setButtonText(t("Overwrite")).onClick(() => {
                                 confirm.close();
                                 saveEncounter();
                             })
@@ -189,7 +190,7 @@
                 exportIcon.setTooltip("");
             } else {
                 exportIcon.setDisabled(false);
-                exportIcon.setTooltip("Copy Encounter Block");
+                exportIcon.setTooltip(t("Copy Encounter Block"));
             }
         }
     }
@@ -198,7 +199,7 @@
     const loadIcon = (node: HTMLElement) => {
         loadButton = new ExtraButtonComponent(node)
             .setIcon("upload")
-            .setTooltip("Load Encounter");
+            .setTooltip(t("Load Encounter"));
     };
     $: loadButton?.setDisabled(Object.keys(plugin.data.encounters).length == 0);
     const load = (evt: MouseEvent) => {
@@ -229,7 +230,7 @@
     const clear = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon("eraser")
-            .setTooltip("Clear Encounter");
+            .setTooltip(t("Clear Encounter"));
     };
     const copy = async () => {
         const enc: {
@@ -256,11 +257,11 @@
             await navigator.clipboard.writeText(
                 `\`\`\`encounter\n${stringifyYaml(enc)}\`\`\``
             );
-            new Notice("Encounter saved to clipboard");
+            new Notice(t("Encounter saved to clipboard"));
         } catch (e) {
             console.error(e);
             new Notice(
-                "Could not save encounter, please check console for errors"
+                t("Could not save encounter, please check console for errors")
             );
         }
     };
@@ -269,11 +270,11 @@
 <div class="encounter-header">
     <div class="encounter-name">
         {#if $updatingName}
-            <input type="text" bind:value={$tempName} placeholder={$name} />
+            <input type="text" bind:value={$tempName} placeholder={t($name)} />
             <div use:saveIcon on:click={setName} />
             <div use:cancelIcon on:click={cancelName} />
         {:else}
-            <h5 class="built-encounter">{$name}</h5>
+            <h5 class="built-encounter">{t($name)}</h5>
             <div use:editIcon on:click={() => ($updatingName = true)} />
         {/if}
     </div>
@@ -288,13 +289,13 @@
             use:clear
             on:click={() => {
                 encounter.empty();
-                $name = "Encounter";
+                $name = t("Encounter");
             }}
         />
     </div>
 </div>
 {#if !items.length}
-    <span>Add some creatures to get started!</span>
+    <span>{t("Add some creatures to get started!")}</span>
 {:else}
     <div class="encounter-creatures">
         {#each items as [creature, count]}

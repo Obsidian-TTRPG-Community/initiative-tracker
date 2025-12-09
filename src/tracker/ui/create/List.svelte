@@ -10,6 +10,7 @@
         RANDOM_HP
     } from "src/utils";
     import type { Creature } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
     import type { Writable } from "svelte/store";
 
     export let adding: Writable<Array<[Creature, number]>>;
@@ -61,7 +62,7 @@
     };
 </script>
 
-<h5 class="list-header">Creatures</h5>
+<h5 class="list-header">{t("Creatures")}</h5>
 <div class="initiative-tracker-list">
     {#if $adding.length}
         {#each $adding as [creature, number], index}
@@ -115,7 +116,7 @@
             </div>
         {/each}
     {:else}
-        <span>Add a creature.</span>
+        <span>{t("Add a creature.")}</span>
     {/if}
 </div>
 

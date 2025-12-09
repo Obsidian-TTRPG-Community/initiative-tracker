@@ -1,4 +1,5 @@
 import { Modal } from "obsidian";
+import { t } from "src/utils/i18n";
 
 import Headers from "./Headers.svelte";
 import type { TableHeaderState } from "src/builder/builder.types";
@@ -11,7 +12,7 @@ export class HeadersModal extends Modal {
         super(app);
     }
     onOpen() {
-        this.titleEl.setText("Edit Headers");
+        this.titleEl.setText(t("Edit Headers"));
         const app = new Headers({
             target: this.contentEl,
             props: {

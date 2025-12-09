@@ -1,6 +1,7 @@
 <script lang="ts">
     import { ExtraButtonComponent } from "obsidian";
     import { SAVE } from "src/utils";
+    import { t } from "src/utils/i18n";
 
     import { getContext } from "svelte";
     import { createEventDispatcher } from "svelte";
@@ -55,7 +56,7 @@
 
 <div class="saving-container">
     <div class="saving-encounter">
-        <span>Save encounter as:</span>
+        <span>{t("Save encounter as:")}</span>
         <!-- svelte-ignore a11y-autofocus -->
         <input type="text" bind:value={encounterName} on:input={checkSave} />
     </div>
@@ -64,7 +65,7 @@
         {#if checking}
             <span class="checking">
                 <small>
-                    An encounter by that name already exists. Are you sure?
+                    {t("An encounter by that name already exists. Are you sure?")}
                 </small>
             </span>
         {/if}

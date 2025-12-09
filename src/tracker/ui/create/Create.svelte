@@ -12,6 +12,7 @@
     import { DICE } from "src/utils";
     import { SRDMonsterSuggestionModal } from "src/utils/suggester";
     import { Creature } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
     import type InitiativeTracker from "src/main";
     import type { Writable } from "svelte/store";
     import { equivalent } from "src/encounter";
@@ -39,18 +40,18 @@
     const prior = modifier;
     const saveButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setTooltip("Add Creature")
+            .setTooltip(t("Add Creature"))
             .setIcon("plus")
             .onClick(async () => {
                 if (!creature || !creature.name || !creature.name?.length) {
-                    new Notice("Enter a name!");
+                    new Notice(t("Enter a name!"));
                     return;
                 }
                 try {
                     creature.modifier = JSON.parse(`${modifier}`);
                 } catch (e) {
                     console.warn(
-                        "Initiative Tracker: Non-parseable modifier provided to creature."
+                        t("Initiative Tracker: Non-parseable modifier provided to creature.")
                     );
                     creature.modifier = JSON.parse(prior);
                 }
@@ -63,7 +64,7 @@
                     isNaN(Number(creature.modifier))
                 ) {
                     console.warn(
-                        "Initiative Tracker: Non-numeric modifier provided to creature."
+                        t("Initiative Tracker: Non-numeric modifier provided to creature.")
                     );
                     creature.modifier = 0;
                 }
@@ -92,11 +93,11 @@
     };
     const editButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setTooltip("Add Creature")
+            .setTooltip(t("Add Creature"))
             .setIcon("save")
             .onClick(async () => {
                 if (!creature || !creature.name || !creature.name?.length) {
-                    new Notice("Enter a name!");
+                    new Notice(t("Enter a name!"));
                     return;
                 }
                 if (!creature.modifier) {
@@ -118,7 +119,7 @@
                     existing > -1 &&
                     (await confirmWithModal(
                         app,
-                        `This will merge ${creature.name} with ${$adding[existing][0].name}.`
+                        `${t("This will merge")} ${creature.name} ${t("with")} ${$adding[existing][0].name}.`
                     ))
                 ) {
                     const index = $adding.findIndex(([k]) => k == creature);
@@ -132,7 +133,7 @@
     };
     const cancelButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
-            .setTooltip("Cancel")
+            .setTooltip(t("Cancel"))
             .setIcon("reset")
             .onClick(() => {
                 creature = new Creature({});
@@ -141,7 +142,7 @@
     const diceButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node)
             .setIcon(DICE)
-            .setTooltip("Roll Initiative")
+            .setTooltip(t("Roll Initiative"))
             .onClick(async () => {
                 creature.initiative = await plugin.getInitiativeValue(
                     creature.modifier
@@ -204,11 +205,11 @@
 <div class="initiative-tracker-editor">
     <div class="create-new">
         <div>
-            <label for="add-name">Creature</label>
+            <label for="add-name">{t("Creature")}</label>
             <div use:name id="add-name" />
         </div>
         <div>
-            <label for="add-display">Display Name</label>
+            <label for="add-display">{t("Display Name")}</label>
             <input
                 bind:value={creature.display}
                 bind:this={displayNameInput}
@@ -219,7 +220,7 @@
             />
         </div>
         <div>
-            <label for="add-hp">HP</label>
+            <label for="add-hp">{t("HP")}</label>
             <input
                 bind:value={creature.hp}
                 id="add-hp"
@@ -229,7 +230,7 @@
             />
         </div>
         <div>
-            <label for="hit-dice">Hit Dice</label>
+            <label for="hit-dice">{t("Hit Dice")}</label>
             <input
                 bind:value={creature.hit_dice}
                 id="hit-dice"
@@ -239,7 +240,7 @@
             />
         </div>
         <div>
-            <label for="add-ac">AC</label>
+            <label for="add-ac">{t("AC")}</label>
             <input
                 bind:value={creature.ac}
                 on:change={() => (creature.dirty_ac = true)}
@@ -250,7 +251,7 @@
             />
         </div>
         <div>
-            <label for="add-mod">Modifier</label>
+            <label for="add-mod">{t("Modifier")}</label>
             <input
                 bind:value={modifier}
                 id="add-mod"
@@ -261,7 +262,7 @@
         </div>
 
         <div class="initiative">
-            <label for="add-init">Initiative</label>
+            <label for="add-init">{t("Initiative")}</label>
             <input
                 bind:value={creature.initiative}
                 id="add-init"
@@ -274,21 +275,21 @@
 
         {#key creature}
             <div>
-                <label for="add-mod">Static Initiative</label>
+                <label for="add-mod">{t("Static Initiative")}</label>
                 <div use:staticToggle />
             </div>
             <div>
-                <label for="add-mod">Hidden</label>
+                <label for="add-mod">{t("Hidden")}</label>
                 <div use:hideToggle />
             </div>
             <div>
-                <label for="add-mod">Friendly</label>
+                <label for="add-mod">{t("Friendly")}</label>
                 <div use:friendToggle />
             </div>
         {/key}
 
         <div class="amount">
-            <label for="add-init">Amount</label>
+            <label for="add-init">{t("Amount")}</label>
             <input
                 bind:value={amount}
                 id="add-init"

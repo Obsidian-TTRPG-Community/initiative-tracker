@@ -1,7 +1,9 @@
 <script lang="ts">
     import { Notice } from "obsidian";
-
+    
     import { createEventDispatcher } from "svelte";
+
+    import { t } from "src/utils/i18n";
 
     const dispatch = createEventDispatcher();
 
@@ -21,7 +23,7 @@
             on:blur={function (evt) {
                 const value = this.value;
                 if (isNaN(Number(value))) {
-                    new Notice("Enter a valid initiative.");
+                    new Notice(t("Enter a valid initiative."));
                     this.value = `${initiative}`;
                     return;
                 }

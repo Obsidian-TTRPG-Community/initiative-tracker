@@ -1,3 +1,4 @@
+import { t } from "src/utils/i18n";
 import { RpgSystem } from "./rpgSystem";
 import { crToString, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
@@ -76,7 +77,7 @@ const DIFFICULTY_TO_CSS: Record<string, string> = {
 export class Dnd5eCr2SimpleRpgSystem extends RpgSystem {
   plugin: InitiativeTracker;
 
-  override valueUnit = "Power";
+  override valueUnit = t("Power");
 
   override systemDifficulties: [string, string, ...string[]] = [
 		"Mild",
@@ -89,7 +90,7 @@ export class Dnd5eCr2SimpleRpgSystem extends RpgSystem {
   constructor(plugin: InitiativeTracker) {
     super();
     this.plugin = plugin;
-    this.displayName = "DnD 5e CR2.0 Simple";
+    this.displayName = t("DnD 5e CR2.0 Simple");
   }
 
   getCreatureDifficulty(creature: GenericCreature, _?: number[]): number {
@@ -103,7 +104,7 @@ export class Dnd5eCr2SimpleRpgSystem extends RpgSystem {
   ): string[] {
       const cr = getFromCreatureOrBestiary(
           this.plugin, creature, c => c?.cr ?? 0);
-      return [`${crToString(cr)} CR`];
+      return [`${crToString(cr)} ${t("CR")}`];
   }
 
   getEncounterDifficulty(
@@ -119,14 +120,14 @@ export class Dnd5eCr2SimpleRpgSystem extends RpgSystem {
       ?? "Mild";
 
     const thresholdSummary = thresholds
-      .map(threshold => `${threshold.displayName}: ${threshold.minValue}`)
+      .map(threshold => `${t(threshold.displayName)}: ${threshold.minValue}`)
       .join("\n");
 
-    const summary = `Encounter is ${displayName}
-Total Power: ${creaturePower}
+    const summary = `${t("Encounter is")} ${t(displayName)}
+${t("Total Power")}: ${creaturePower}
 
 
-Threshold
+${t("Threshold")}
 ${thresholdSummary}`;
 
     return {
@@ -134,7 +135,7 @@ ${thresholdSummary}`;
       summary,
       cssClass: DIFFICULTY_TO_CSS[displayName],
       value: creaturePower,
-      title: "Total Creature Power",
+      title: t("Total Creature Power"),
       intermediateValues: [],
     };
   }

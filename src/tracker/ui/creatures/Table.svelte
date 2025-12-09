@@ -5,6 +5,7 @@
 
     import { AC, DICE, HP, META_MODIFIER } from "src/utils";
     import { Creature, getId } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
     import { createEventDispatcher } from "svelte";
     import { dndzone } from "svelte-dnd-action";
     import { flip } from "svelte/animate";
@@ -71,10 +72,10 @@
             <td
                 style="width: 10%;"
                 use:diceIcon
-                aria-label="Re-Roll Initiatives"
+                aria-label="{t("Re-Roll Initiatives")}"
                 on:click={(evt) => tracker.roll(plugin)}
             />
-            <th class="left" style="width:55%">Name</th>
+            <th class="left" style="width:55%">{t("Name")}</th>
             <th style="width:15%" use:hpIcon class="center" />
             <th style="width:15%" use:acIcon class="center" />
             <th style="width:5%" />
@@ -119,8 +120,8 @@
         </tbody>
     {:else}
         <div class="no-creatures">
-            <p>Add a creature to get started!</p>
-            <small>Players may be created in settings.</small>
+            <p>{t("Add a creature to get started!")}</p>
+            <small>{t("Players may be created in settings.")}</small>
         </div>
     {/if}
 </table>

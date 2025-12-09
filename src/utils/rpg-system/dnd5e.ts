@@ -1,3 +1,4 @@
+import { t } from "src/utils/i18n";
 import { RpgSystem } from "./rpgSystem";
 import { crToString, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
@@ -81,7 +82,7 @@ export class Dnd5eRpgSystem extends RpgSystem {
     constructor(plugin: InitiativeTracker) {
         super();
         this.plugin = plugin;
-        this.displayName = "DnD 5e";
+        this.displayName = t("DnD 5e");
     }
 
     getCreatureDifficulty(creature: GenericCreature, _?: number[]): number {
@@ -108,7 +109,7 @@ export class Dnd5eRpgSystem extends RpgSystem {
             creature,
             (c) => c?.cr ?? 0
         );
-        return [`${crToString(cr)} CR`];
+        return [`${crToString(cr)} ${t("CR")}`];
     }
 
     getEncounterDifficulty(
@@ -139,15 +140,15 @@ export class Dnd5eRpgSystem extends RpgSystem {
 
         const thresholdSummary = thresholds
             .map(
-                (threshold) => `${threshold.displayName}: ${threshold.minValue}`
+                (threshold) => `${t(threshold.displayName)}: ${threshold.minValue}`
             )
             .join("\n");
 
-        const summary = `Encounter is ${displayName}
-Total XP: ${creatureXp}
-Adjusted XP: ${adjustedXp} (x${mult})
+        const summary = `${t("Encounter is")} ${t(displayName)}
+${t("Total XP")}: ${creatureXp}
+${t("Adjusted XP")}: ${adjustedXp} (x${mult})
 
-Threshold
+${t("Threshold")}
 ${thresholdSummary}`;
 
         return {
@@ -155,8 +156,8 @@ ${thresholdSummary}`;
             summary,
             cssClass: displayName.toLowerCase(),
             value: adjustedXp,
-            title: "Adjusted XP",
-            intermediateValues: [{ label: "Total XP", value: creatureXp }]
+            title: t("Adjusted XP"),
+            intermediateValues: [{ label: t("Total XP"), value: creatureXp }]
         };
     }
 
@@ -189,7 +190,7 @@ ${thresholdSummary}`;
     ): DifficultyThreshold[] {
         return [
             {
-                displayName: "Daily Budget",
+                displayName: t("Daily Budget"),
                 minValue: playerLevels
                     .filter((l) => l && l > 0)
                     .reduce(

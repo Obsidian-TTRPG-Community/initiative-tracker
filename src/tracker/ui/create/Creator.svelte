@@ -3,6 +3,7 @@
     import type InitiativeTracker from "src/main";
     import { tracker } from "src/tracker/stores/tracker";
     import { Creature } from "src/utils/creature";
+    import { t } from "src/utils/i18n";
     import { createEventDispatcher } from "svelte";
     import { writable } from "svelte/store";
     import Create from "./Create.svelte";
@@ -22,7 +23,7 @@
     const cancel = (node: HTMLElement) => {
         new ButtonComponent(node)
             .setCta()
-            .setButtonText("Cancel")
+            .setButtonText(t("Cancel"))
             .onClick(() => {
                 dispatch("close");
             });
@@ -30,7 +31,7 @@
 
     const add = (node: HTMLElement) => {
         new ButtonComponent(node)
-            .setButtonText(isEditing ? "Save" : "Add to Encounter")
+            .setButtonText(isEditing ? t("Save") : t("Add to Encounter"))
             .onClick(async () => {
                 if (!$adding.length && !isEditing && !Platform.isMobile) return;
                 if (isEditing) {
@@ -88,7 +89,7 @@
                         id="roll-hp"
                         bind:checked={rollHP}
                     />
-                    <label for="roll-hp">Roll for HP</label>
+                    <label for="roll-hp">{t("Roll for HP")}</label>
                 </div>
             </div>
         {/if}

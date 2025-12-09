@@ -1,6 +1,7 @@
 import { normalizePath, TFile } from "obsidian";
 import type InitiativeTracker from "../main";
 import type { Creature } from "../utils/creature";
+import { t } from "src/utils/i18n";
 
 import { tracker } from "src/tracker/stores/tracker";
 import type { UpdateLogMessage } from "./logger.types";
@@ -61,13 +62,13 @@ export default class Logger {
             await this.setLogFile(param);
         } else {
             await this.setLogFile(
-                `${this.folder}/${Date.now()} - ${param.name ?? "Combat"}.md`
+                `${this.folder}/${Date.now()} - ${param.name ?? t("Combat")}.md`
             );
             await this.log(
-                `**Combat started ${new Date().toLocaleString()}**\n\n`
+                `**${t("Combat started")} ${new Date().toLocaleString()}**\n\n`
             );
-            await this.log("## Players");
-            await this.log("| Player | Initiative | HP | Statuses |");
+            await this.log(`## ${t("Players")}`);
+            await this.log(`| ${t("Player")} | ${t("Initiative")} | ${t("HP")} | ${t("Statuses")} |`);
             await this.log("| --- | :-: | :-: | :-: |");
             for (const player of param.players.sort(
                 (a, b) => b.initiative - a.initiative
@@ -90,8 +91,8 @@ export default class Logger {
                     "|"
                 );
             }
-            await this.log("## Creatures");
-            await this.log("| Creature | Initiative  | HP | Statuses |");
+            await this.log(`## ${t("Creatures")}`);
+            await this.log(`| ${t("Creature")} | ${t("Initiative")}  | ${t("HP")} | ${t("Statuses")} |`);
             await this.log("| --- | :-: | :-: | :-: |");
             for (const creature of param.creatures.sort(
                 (a, b) => b.initiative - a.initiative
@@ -115,10 +116,10 @@ export default class Logger {
                 );
             }
 
-            await this.log("\n\n## Combat Log");
-            await this.log("\n### Round 1");
+            await this.log(`\n\n## ${t("Combat Log")}`);
+            await this.log(`\n### ${t("Round")} 1`);
             await this.log(
-                `\n##### ${tracker.getOrderedCreatures()[0].getName()}'s turn`
+                `\n##### ${t("%s's turn").replace("%s", tracker.getOrderedCreatures()[0].getName())}`
             );
         }
     }
@@ -134,7 +135,7 @@ export default class Logger {
         if (strings.length == 1) {
             return strings[0];
         }
-        return `${strings.slice(0, -1).join(", ")} ${joiner} ${strings.slice(
+        return `${strings.slice(0, -1).join(", ")} ${t(joiner)} ${strings.slice(
             -1
         )}`;
     }
@@ -145,69 +146,77 @@ export default class Logger {
             if (message.hp) {
                 if (message.temp) {
                     perCreature.push(
-                        `${message.name} gained ${(
-                            -1 * message.hp
-                        ).toString()} temporary HP`
+                        `${t("%s gained %d temporary HP")
+                            .replace("%s", message.name)
+                            .replace("%d", (-1 * message.hp).toString())
+                        }`
                     );
                 } else if (message.max) {
                     if (message.hp < 0) {
                         perCreature.push(
-                            `${message.name} took ${(
-                                -1 * message.hp
-                            ).toString()} max HP damage${
-                                message.unc ? " and died" : ""
+                            `${t("%s1 took %d max HP damage%s2")
+                                .replace("%s1", message.name)
+                                .replace("%d", (-1 * message.hp).toString())
+                                .replace("%s2", message.unc ? t(" and died") : "")
                             }`
                         );
                     } else {
                         perCreature.push(
-                            `${
-                                message.name
-                            } gained ${message.hp.toString()} max HP`
+                            `${t("%s gained %d max HP")
+                                .replace("%s", message.name)
+                                .replace("%d", message.hp.toString())
+                            }`
                         );
                     }
                 } else if (message.hp < 0) {
                     perCreature.push(
-                        `${message.name} took ${(
-                            -1 * message.hp
-                        ).toString()} damage${
-                            message.unc ? " and was knocked unconscious" : ""
+                        `${t("%s1 took %d damage%s2")
+                            .replace("%s1", message.name)
+                            .replace("%d", (-1 * message.hp).toString())
+                            .replace("%s2", message.unc ? t(" and was knocked unconscious") : "")
                         }`
                     );
                 } else if (message.hp > 0) {
                     perCreature.push(
-                        `${
-                            message.name
-                        } was healed for ${message.hp.toString()} HP`
+                        `${t("%s was healed for %d HP")
+                            .replace("%s", message.name)
+                            .replace("%d", message.hp.toString())
+                        }`
                     );
                 }
             }
             if (message.ac) {
                 if (perCreature.length && !message.status) {
-                    perCreature.push("and");
+                    perCreature.push(t("and"));
                 } else if (perCreature.length) {
                     perCreature.push(",");
                 }
 
                 if (message.ac_add) {
                     perCreature.push(
-                        `${message.name} added ${message.ac} to AC`
+                        `${t("%s added %d to AC")
+                            .replace("%s", message.name)
+                            .replace("%d", message.ac)
+                        }`
                     );
                 } else {
                     perCreature.push(
-                        `${message.name} AC set to ${
-                            message.ac ? message.ac : "be blank"
+                        `${t("%s AC set to %d")
+                            .replace("%s", message.name)
+                            .replace("%d", message.ac ? message.ac : t("be blank"))
                         }`
                     );
                 }
             }
             if (message.status) {
                 if (perCreature.length) {
-                    perCreature.push("and");
+                    perCreature.push(t("and"));
                 } else {
                     perCreature.push(message.name);
                 }
                 let status;
                 if (message.status.length > 1) {
+                    message.status = message.status.map((s) => t(s));
                     status = [
                         message.status
                             .slice(0, message.status.length - 1)
@@ -215,17 +224,17 @@ export default class Logger {
                     ];
                     status.push(message.status[message.status.length - 1]);
                 } else {
-                    status = [message.status[0]];
+                    status = [t(message.status[0])];
                 }
                 if (message.saved) {
-                    perCreature.push(`saved against ${status.join(" and ")}`);
+                    perCreature.push(`${t("saved against")} ${status.join(t(" and "))}`);
                 } else {
-                    perCreature.push(`took ${status.join(" and ")} status`);
+                    perCreature.push(`${t("took %s status").replace("%s", status.join(t(" and ")))}`);
                 }
             }
             if (message.remove_status) {
                 if (perCreature.length) {
-                    perCreature.push("and");
+                    perCreature.push(t("and"));
                 } else {
                     perCreature.push(message.name);
                 }
@@ -240,7 +249,7 @@ export default class Logger {
                 } else {
                     status = [message.remove_status[0]];
                 }
-                perCreature.push(`relieved of ${status.join(" and ")} status`);
+                perCreature.push(`${t("relieved of")} ${status.join(t(" and "))} ${t("status")}`);
             }
             toLog.push(perCreature.join(" "));
         }

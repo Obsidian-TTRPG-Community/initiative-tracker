@@ -19,6 +19,7 @@ import {
     RollPlayerInitiativeBehavior,
     getRpgSystem
 } from "src/utils";
+import { t } from "src/utils/i18n";
 import type Logger from "../../logger/logger";
 import type {
     DifficultyLevel,
@@ -77,10 +78,10 @@ function createTracker() {
                         $logFile.set(_logger.getFile());
                     });
             } else {
-                _logger?.log(`Combat re-started`);
+                _logger?.log(t("Combat re-started"));
             }
         } else {
-            _logger?.log("Combat stopped");
+            _logger?.log(t("Combat stopped"));
         }
         updateAndSave((creatures) => {
             if (creatures.length && !creatures.find((c) => c.active)) {
@@ -159,7 +160,10 @@ function createTracker() {
 
     const logNewInitiative = (creature: Creature) => {
         _logger?.log(
-            `${creature.getName()} initiative changed to ${creature.initiative}`
+            `${t("%s initiative changed to %d")
+                .replace("%s", creature.getName())
+                .replace("%d", creature.initiative)
+            }`
         );
     };
 
@@ -648,9 +652,9 @@ function createTracker() {
                                 );
                             }
 
-                            _logger?.log("###", `Round ${round}`);
+                            _logger?.log("###", `${t("Round")} ${round}`);
                         }
-                        _logger?.log("#####", `${next.getName()}'s turn`);
+                        _logger?.log("#####", `${t("%s's turn").replace("%s", next.getName())}`);
                         next.active = true;
                     }
                 }
@@ -691,9 +695,9 @@ function createTracker() {
                                     )
                                 );
                             }
-                            _logger?.log("###", `Round ${round}`);
+                            _logger?.log("###", `${t("Round")} ${round}`);
                         }
-                        _logger?.log("#####", `${prev.getName()}'s turn`);
+                        _logger?.log("#####", `${t("%s's turn").replace("%s", prev.getName())}`);
                         prev.active = true;
                     }
                 }
@@ -731,7 +735,7 @@ function createTracker() {
                 rollIntiative(plugin, toRoll);
                 _logger?.log(
                     _logger?.join(items.map((c) => c.name)),
-                    "added to the combat."
+                    t("added to the combat.")
                 );
                 setNumbers(creatures);
                 return creatures;
@@ -742,7 +746,7 @@ function createTracker() {
 
                 _logger?.log(
                     _logger?.join(items.map((c) => c.name)),
-                    "removed from the combat."
+                    t("removed from the combat.")
                 );
                 return creatures;
             }),
@@ -842,7 +846,7 @@ function createTracker() {
                     creature.enabled = true;
                     creature.status.clear();
                 }
-                _logger?.log("Encounter HP & Statuses reset");
+                _logger?.log(t("Encounter HP & Statuses reset"));
                 return creatures;
             }),
 
@@ -854,54 +858,55 @@ function createTracker() {
                 if (message.hp) {
                     if (message.temp) {
                         perCreature.push(
-                            `${
-                                message.name
-                            } gained ${message.hp.toString()} temporary HP`
+                            `${t("%s gained %d temporary HP")
+                                .replace("%s", message.name)
+                                .replace("%d", message.hp.toString())
+                            }`
                         );
                     } else if (message.max) {
                         if (message.hp < 0) {
                             perCreature.push(
-                                `${message.name} took ${(
-                                    -1 * message.hp
-                                ).toString()} max HP damage${
-                                    message.unc ? " and died" : ""
+                                `${t("%s1 took %d max HP damage%s2")
+                                    .replace("%s1", message.name)
+                                    .replace("%d", (-1 * message.hp).toString())
+                                    .replace("%s2", message.unc ? t(" and died") : "")
                                 }`
                             );
                         } else {
                             perCreature.push(
-                                `${message.name} gained ${(
-                                    -1 * message.hp
-                                ).toString()} max HP`
+                                `${t("%s gained %d max HP")
+                                    .replace("%s", message.name)
+                                    .replace("%d", message.hp.toString())
+                                }`
                             );
                         }
                     } else if (message.hp < 0) {
                         perCreature.push(
-                            `${message.name} took ${(
-                                -1 * message.hp
-                            ).toString()} damage${
-                                message.unc
-                                    ? " and was knocked unconscious"
-                                    : ""
+                            `${t("%s1 took %d damage%s2")
+                                .replace("%s1", message.name)
+                                .replace("%d", (-1 * message.hp).toString())
+                                .replace("%s2", message.unc ? t(" and was knocked unconscious") : "")
                             }`
                         );
                     } else if (message.hp > 0) {
                         perCreature.push(
-                            `${
-                                message.name
-                            } was healed for ${message.hp.toString()} HP`
+                            `${t("%s was healed for %d HP")
+                                .replace("%s", message.name)
+                                .replace("%d", message.hp.toString())
+                            }`
                         );
                     }
                 }
                 if (message.status) {
                     if (perCreature.length) {
-                        perCreature.push("and");
+                        perCreature.push(t("and"));
                     } else {
                         perCreature.push(message.name);
                     }
                     if (message.saved) {
-                        perCreature.push(`saved against ${message.status}`);
+                        perCreature.push(`${t("saved against")} ${message.status}`);
                     } else {
-                        perCreature.push(`took ${message.status} status`);
+                        perCreature.push(`${t("took %s status").replace("%s", message.status)}`);
                     }
                 }
                 toLog.push(perCreature.join(" "));
@@ -1053,10 +1058,10 @@ class Tracker {
                     round: get(this.round)
                 });
             } else {
-                this.tryLog(`Combat re-started`);
+                this.tryLog(t("Combat re-started"));
             }
         } else {
-            this.tryLog("Combat stopped");
+            this.tryLog(t("Combat stopped"));
         }
         this.#updateAndSave((creatures) => {
             if (creatures.length && !creatures.find((c) => c.active)) {
@@ -1123,8 +1128,9 @@ class Tracker {
             if (change.initiative) {
                 creature.initiative = Number(change.initiative);
                 this.tryLog(
-                    `${creature.getName()} initiative changed to ${
-                        creature.initiative
+                    `${t("%s initiative changed to %d")
+                        .replace("%s", creature.getName())
+                        .replace("%d", creature.initiative)
                     }`
                 );
             }
@@ -1222,23 +1228,28 @@ class Tracker {
                 for (const status of change.remove_status) {
                     creature.removeCondition(status);
                     this.tryLog(
-                        `${creature.name} relieved of status ${status.name}`
+                        `${t("%s1 relieved of status %s2")
+                            .replace("%s1", creature.name)
+                            .replace("%s2", status.name)
+                        }`
                     );
                 }
             }
             if ("hidden" in change) {
                 creature.hidden = change.hidden!;
                 this.tryLog(
-                    `${creature.getName()} ${
-                        creature.hidden ? "hidden" : "revealed"
+                    `${t("%s1 %s2")
+                        .replace("%s1", creature.getName())
+                        .replace("%s2", creature.hidden ? t("hidden") : t("revealed"))
                     }`
                 );
             }
             if ("enabled" in change) {
                 creature.enabled = change.enabled!;
                 this.tryLog(
-                    `${creature.getName()} ${
-                        creature.enabled ? "enabled" : "disabled"
+                    `${t("%s1 %s2")
+                        .replace("%s1", creature.getName())
+                        .replace("%s2", creature.hidden ? t("enabled") : t("disabled"))
                     }`
                 );
             }

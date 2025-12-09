@@ -13,6 +13,7 @@ import {
     CREATURE_TRACKER_VIEW,
     INITIATIVE_TRACKER_VIEW
 } from "../utils";
+import { t } from "src/utils/i18n";
 
 import type InitiativeTracker from "../main";
 
@@ -43,7 +44,7 @@ export default class TrackerView extends ItemView {
         return INITIATIVE_TRACKER_VIEW;
     }
     getDisplayText() {
-        return "Initiative Tracker";
+        return t("Initiative Tracker");
     }
     getIcon() {
         return BASE;
@@ -119,7 +120,7 @@ export class CreatureView extends ItemView {
     onload() {
         new ExtraButtonComponent(this.buttonEl)
             .setIcon("cross")
-            .setTooltip("Close Statblock")
+            .setTooltip(t("Close Statblock"))
             .onClick(async () => {
                 await this.render();
                 this.app.workspace.trigger("initiative-tracker:stop-viewing");
@@ -132,7 +133,7 @@ export class CreatureView extends ItemView {
         this.statblockEl.empty();
         if (!creature) {
             this.statblockEl.createEl("em", {
-                text: "Select a creature to view it here."
+                text: t("Select a creature to view it here.")
             });
             return;
         }
@@ -152,7 +153,7 @@ export class CreatureView extends ItemView {
             this.addChild(statblock);
         } else {
             this.statblockEl.createEl("em", {
-                text: "Install the TTRPG Statblocks plugin or add a statblock-link to your monster to use this feature!"
+                text: t("Install the TTRPG Statblocks plugin or add a statblock-link to your monster to use this feature!")
             });
         }
     }
@@ -176,7 +177,7 @@ export class CreatureView extends ItemView {
 
         const file = this.app.metadataCache.getFirstLinkpathDest(path, "/");
 
-        let content = `Oops! Something is wrong with your statblock-link:<br />${embedLink}`;
+        let content = `${t("Oops! Something is wrong with your statblock-link:")}<br />${embedLink}`;
         if (file) {
             const fileContent = await this.app.vault.cachedRead(file);
             if (subpath && fileContent) {
@@ -203,7 +204,7 @@ export class CreatureView extends ItemView {
     }
 
     getDisplayText(): string {
-        return "Combatant";
+        return t("Combatant");
     }
     getIcon(): string {
         return CREATURE;

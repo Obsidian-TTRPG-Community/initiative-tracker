@@ -11,6 +11,7 @@
     import { createEventDispatcher } from "svelte";
     import DraggableField from "./DraggableField.svelte";
     import { writable } from "svelte/store";
+    import { t } from "src/utils/i18n";
 
     export let filter: Filter;
     export let original: Filter;
@@ -18,7 +19,7 @@
     const dispatch = createEventDispatcher<{ cancel: null; update: Filter }>();
 
     const reset = (node: HTMLElement) => {
-        new Setting(node).setName("Reset").addExtraButton((b) => {
+        new Setting(node).setName(t("Reset")).addExtraButton((b) => {
             b.setIcon("reset").onClick(() => {
                 filter = copy(original);
             });
@@ -26,10 +27,10 @@
     };
 
     const type = (node: HTMLElement) => {
-        new Setting(node).setName("Filter Type").addDropdown((d) => {
-            d.addOption(`${FilterType.Range}`, "Range");
-            d.addOption(`${FilterType.Options}`, "Options");
-            d.addOption(`${FilterType.Search}`, "Search");
+        new Setting(node).setName(t("Filter Type")).addDropdown((d) => {
+            d.addOption(`${FilterType.Range}`, t("Range"));
+            d.addOption(`${FilterType.Options}`, t("Options"));
+            d.addOption(`${FilterType.Search}`, t("Search"));
             d.setValue(`${filter.type}`).onChange((v) => {
                 filter.type = Number(v);
                 switch (filter.type) {
@@ -47,8 +48,8 @@
         });
     };
     const text = (node: HTMLElement) => {
-        new Setting(node).setName("Display Text").addText((t) => {
-            t.setValue(filter.text).onChange((v) => (filter.text = v));
+        new Setting(node).setName(t("Display Text")).addText((s) => {
+            s.setValue(t(filter.text)).onChange((v) => (filter.text = v));
         });
     };
     let field = writable(""),
@@ -59,7 +60,7 @@
         const opts = filter;
         let input: TextComponent;
         new Setting(node)
-            .setName("Fields")
+            .setName(t("Fields"))
             .addText((t) => {
                 input = t.onChange((v) => ($field = v));
             })
@@ -69,10 +70,10 @@
                         if (opts.fields.includes($field)) {
                             new Notice(
                                 createFragment((e) => {
-                                    e.createSpan({ text: "The field " });
+                                    e.createSpan({ text: t("The field ") });
                                     e.createEl("code", { text: $field });
                                     e.createSpan(
-                                        " has already been added to the options for this filter."
+                                        t(" has already been added to the options for this filter.")
                                     );
                                 })
                             );
@@ -90,13 +91,13 @@
     };
     const derive = (node: HTMLElement) => {
         if (filter.type == FilterType.Search) return;
-        new Setting(node).setName("Derive Options").addToggle((t) => {
+        new Setting(node).setName(t("Derive Options")).addToggle((t) => {
             t.setValue(filter.derive).onChange((v) => (filter.derive = v));
         });
     };
     const options = (node: HTMLElement) => {
         new Setting(node)
-            .setName("Options")
+            .setName(t("Options"))
             .addText((t) => t)
             .addExtraButton((b) => b.setIcon("plus-circle"));
     };
@@ -107,7 +108,7 @@
         if (filter.type != FilterType.Range) return;
         const range = filter;
         new Setting(node)
-            .setName("Options")
+            .setName(t("Options"))
             .addText(
                 (t) =>
                     (t
@@ -126,7 +127,7 @@
             );
     };
     const cancel = (node: HTMLElement) => {
-        new ButtonComponent(node).setButtonText("Cancel").setCta();
+        new ButtonComponent(node).setButtonText(t("Cancel")).setCta();
     };
     $: dispatch("update", filter);
 </script>
