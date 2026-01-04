@@ -258,6 +258,19 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
             });
         new Setting(additionalContainer)
+            .setName("Display Creature AC in Player View")
+            .setDesc(
+                "Display creature AC in Player View. Only revealed after first Hit to creature."
+            )
+            .addToggle((t) => {
+                t.setValue(this.plugin.data.displayCreatureACInPlayerView).onChange(
+                    async (v) => {
+                        this.plugin.data.displayCreatureACInPlayerView = v;
+                        await this.plugin.saveSettings();
+                    }
+                );
+            })
+        new Setting(additionalContainer)
             .setName("Roll HP for Creatures")
             .setDesc(
                 createFragment((e) => {

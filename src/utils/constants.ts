@@ -34,6 +34,7 @@ export const DEFAULT_SETTINGS: InitiativeTrackerData = {
     players: [],
     parties: [],
     defaultParty: null,
+    displayCreatureACInPlayerView: false,
     statuses: [...Conditions],
     unconsciousId: "Unconscious",
     version: [],

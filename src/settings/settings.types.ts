@@ -42,6 +42,7 @@ export interface InitiativeTrackerData {
     resolveTies: string;
     useLegacy: boolean;
     diplayPlayerHPValues: boolean;
+    displayCreatureACInPlayerView: boolean;
     rollHP: boolean;
     builder: BuilderState;
     descending: boolean;
