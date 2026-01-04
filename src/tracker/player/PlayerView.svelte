@@ -55,6 +55,9 @@
         <th class="left" style="width:30%"><strong>Name</strong></th>
         <th style="width:15%" class="center"><strong use:hpIcon /></th>
         <th><strong> Statuses </strong></th>
+        {#if $data.displayCreatureACInPlayerView}
+            <th><strong use:acIcon /></th>
+        {/if}
     </thead>
     <tbody>
         {#each activeAndVisible as creature (creature.id)}
@@ -83,6 +86,13 @@
                 <td class="center">
                     {[...creature.status].map((s) => s.name).join(", ")}
                 </td>
+                {#if $data.displayCreatureACInPlayerView}
+                    <td class="center">
+                        {#if creature.hp < creature.max}
+                            <span class="armor-class">{@html creature.ac}</span>
+                        {/if}
+                    </td>
+                {/if}
             </tr>
         {/each}
     </tbody>
