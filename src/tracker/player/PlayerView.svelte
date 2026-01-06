@@ -47,6 +47,25 @@
     const friendIcon = (node: HTMLElement) => {
         setIcon(node, FRIENDLY);
     };
+
+    const showACColumn = (activeAndVisible: Creature[]) => {
+        // for the header, check if any creature has visible AC at the moment
+        const anyRevealed = activeAndVisible.some(
+            (creature) => creature.revealAc
+        );
+
+        // also check if general ac setting is enabled
+        return anyRevealed || $data.displayCreatureACInPlayerView;
+    }
+
+    const showCreatureAc = (creature: Creature) => {
+        if ($data.displayCreatureACInPlayerView && creature.hp < creature.max) {
+            return true;
+        }
+
+        return creature.revealAc;
+    }
+
 </script>
 
 <table class="initiative-tracker-table" transition:fade>
@@ -55,7 +74,7 @@
         <th class="left" style="width:30%"><strong>Name</strong></th>
         <th style="width:15%" class="center"><strong use:hpIcon /></th>
         <th><strong> Statuses </strong></th>
-        {#if $data.displayCreatureACInPlayerView}
+        {#if showACColumn(activeAndVisible)}
             <th><strong use:acIcon /></th>
         {/if}
     </thead>
@@ -86,9 +105,9 @@
                 <td class="center">
                     {[...creature.status].map((s) => s.name).join(", ")}
                 </td>
-                {#if $data.displayCreatureACInPlayerView}
+                {#if showACColumn(activeAndVisible)}
                     <td class="center">
-                        {#if creature.hp < creature.max}
+                        {#if showCreatureAc(creature)}
                             <span class="armor-class">{@html creature.ac}</span>
                         {/if}
                     </td>

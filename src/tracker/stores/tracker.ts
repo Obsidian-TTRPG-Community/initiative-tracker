@@ -47,6 +47,7 @@ type CreatureUpdate = {
     //this is so dirty
     set_hp?: number;
     set_max_hp?: number;
+    reveal_ac?: boolean;
 };
 type CreatureUpdates = { creature: Creature; change: CreatureUpdate };
 const modifier = Platform.isMacOS ? "Meta" : "Control";
@@ -175,6 +176,12 @@ function createTracker() {
             if (change.name) {
                 creature.name = change.name;
                 creature.number = 0;
+            }
+
+            console.log(change);
+
+            if (change.reveal_ac !== undefined) {
+                creature.revealAc = change.reveal_ac;
             }
             if (change.hp) {
                 // Reduce temp HP first
@@ -390,6 +397,7 @@ function createTracker() {
         updateCreatureByName: (name: string, change: CreatureUpdate) =>
             updateAndSave((creatures) => {
                 const creature = creatures.find((c) => c.name == name);
+
                 if (creature) {
                     if (!isNaN(Number(change.hp))) {
                         creature.hp = change.hp;
@@ -422,6 +430,9 @@ function createTracker() {
                                 creature.temp + change.temp
                             );
                         }
+                    }
+                    if (change.reveal_ac !== undefined) {
+                        creature.revealAc = change.reveal_ac;
                     }
                     if (change.marker) {
                         creature.marker = change.marker;

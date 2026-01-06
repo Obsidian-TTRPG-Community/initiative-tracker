@@ -14,6 +14,7 @@
     import type InitiativeTracker from "src/main";
     import { tracker } from "src/tracker/stores/tracker";
 
+    const { data } = tracker;
     const dispatch = createEventDispatcher();
 
     export let creature: Creature;
@@ -44,6 +45,43 @@
                             tracker.updateAndSave();
                         });
                 });
+            }
+            if (!$data.displayCreatureACInPlayerView) {
+                if (!creature.revealAc) {
+                    menu.addItem((item) => {
+                        item.setIcon("eye")
+                            .setTitle("Reveal AC of Creature Type")
+                            .onClick(() => {
+                                tracker.getOrderedCreatures()
+                                    .filter((c) => c.name === creature.name)
+                                    .map((c) => {
+                                        tracker.updateCreatures({
+                                            creature: c,
+                                            change: { reveal_ac: true }
+                                        });
+                                    });
+    
+                                tracker.updateAndSave();
+                            });
+                    });
+                } else {
+                    menu.addItem((item) => {
+                        item.setIcon("eye")
+                            .setTitle("Hide AC of Creature Type")
+                            .onClick(() => {
+                                tracker.getOrderedCreatures()
+                                    .filter((c) => c.name === creature.name)
+                                    .map((c) => {
+                                        tracker.updateCreatures({
+                                            creature: c,
+                                            change: { reveal_ac: false }
+                                        });
+                                    });
+    
+                                tracker.updateAndSave();
+                            });
+                    });
+                }
             }
             menu.addItem((item) => {
                 item.setIcon("pencil")
