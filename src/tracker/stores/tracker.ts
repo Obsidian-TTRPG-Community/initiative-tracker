@@ -178,8 +178,6 @@ function createTracker() {
                 creature.number = 0;
             }
 
-            console.log(change);
-
             if (change.reveal_ac !== undefined) {
                 creature.revealAc = change.reveal_ac;
             }
