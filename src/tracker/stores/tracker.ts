@@ -549,7 +549,7 @@ function createTracker() {
                         toAdd = roundHalf ? Math.trunc(toAdd) : toAdd;
                         message.hp = toAdd;
 
-                        // reveal ac to players, if setting enabled
+                        // reveal ac to players, if setting for auto reveal is enabled
                         if (toAdd < 0 && _settings.displayCreatureACInPlayerView) {
                             const creatures = get(ordered);
 
@@ -1388,10 +1388,5 @@ class Tracker {
             updates.clear();
             return updates;
         });
-    }
-    revealCreatureAc (creature: Creature) {
-        const creatures = this.ordered;
-
-        console.log(creatures);
     }
 }
