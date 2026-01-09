@@ -10,7 +10,7 @@
     } from "src/utils";
     import type { Creature } from "src/utils/creature";
     import type TrackerView from "src/tracker/view";
-    import { createEventDispatcher, getContext, onDestroy } from "svelte";
+    import { createEventDispatcher, getContext } from "svelte";
     import type InitiativeTracker from "src/main";
     import { tracker } from "src/tracker/stores/tracker";
 
