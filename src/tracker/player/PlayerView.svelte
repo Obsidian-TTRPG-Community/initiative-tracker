@@ -59,8 +59,17 @@
     }
 
     const showCreatureAc = (creature: Creature) => {
-        if ($data.displayCreatureACInPlayerView && creature.hp < creature.max) {
-            return true;
+        if ($data.displayCreatureACInPlayerView) {
+            if ($data.revealCreatureACForSameType) {
+                const creatureName = creature.name;
+
+                // check if any other creature with same name is already hurt
+                return activeAndVisible
+                    .filter((c) => c.name === creatureName)
+                    .some((c) => c.hp < c.max);
+            }
+
+            return creature.hp < creature.max;
         }
 
         return creature.revealAc;
