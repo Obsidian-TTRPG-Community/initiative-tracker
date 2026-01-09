@@ -47,41 +47,42 @@
                 });
             }
             if (!$data.displayCreatureACInPlayerView) {
-                if (!creature.revealAc) {
-                    menu.addItem((item) => {
-                        item.setIcon("eye")
-                            .setTitle("Reveal AC of Creature Type")
-                            .onClick(() => {
-                                tracker.getOrderedCreatures()
-                                    .filter((c) => c.name === creature.name)
-                                    .map((c) => {
-                                        tracker.updateCreatures({
-                                            creature: c,
-                                            change: { reveal_ac: true }
-                                        });
+                const menuItemTitles = $data.revealCreatureACForSameType ? {
+                    hide: "Hide AC of Creature Type",
+                    reveal: "Reveal AC of Creature Type",
+                } : {
+                    hide: "Hide AC of Creature",
+                    reveal: "Reveal AC of Creature",
+                };
+
+                // Get right menu item title for this creature
+                const menuItemTitle = menuItemTitles[
+                    creature.revealAc ? 'hide' : 'reveal'
+                ];
+
+                const reveal_ac = !creature.revealAc;
+
+                menu.addItem((item) => {
+                    item.setTitle(menuItemTitle)
+                        .onClick(() => {
+                            tracker.getOrderedCreatures()
+                                .filter((c) => {
+                                    if ($data.revealCreatureACForSameType) {
+                                        return c.name === creature.name
+                                    }
+
+                                    return c === creature;
+                                })
+                                .map((c) => {
+                                    tracker.updateCreatures({
+                                        creature: c,
+                                        change: { reveal_ac }
                                     });
-    
-                                tracker.updateAndSave();
-                            });
+                                });
+
+                            tracker.updateAndSave();
+                        });
                     });
-                } else {
-                    menu.addItem((item) => {
-                        item.setIcon("eye")
-                            .setTitle("Hide AC of Creature Type")
-                            .onClick(() => {
-                                tracker.getOrderedCreatures()
-                                    .filter((c) => c.name === creature.name)
-                                    .map((c) => {
-                                        tracker.updateCreatures({
-                                            creature: c,
-                                            change: { reveal_ac: false }
-                                        });
-                                    });
-    
-                                tracker.updateAndSave();
-                            });
-                    });
-                }
             }
             menu.addItem((item) => {
                 item.setIcon("pencil")
