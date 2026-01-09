@@ -46,44 +46,44 @@
                         });
                 });
             }
-            if (!$data.displayCreatureACInPlayerView) {
-                const menuItemTitles = $data.revealCreatureACForSameType ? {
-                    hide: "Hide AC of Creature Type",
-                    reveal: "Reveal AC of Creature Type",
-                } : {
-                    hide: "Hide AC of Creature",
-                    reveal: "Reveal AC of Creature",
-                };
+            
+            const revealAcMenuItemTitles = $data.revealCreatureACForSameType ? {
+                hide: "Hide AC of Creature Type",
+                reveal: "Reveal AC of Creature Type",
+            } : {
+                hide: "Hide AC of Creature",
+                reveal: "Reveal AC of Creature",
+            };
 
-                // Get right menu item title for this creature
-                const menuItemTitle = menuItemTitles[
-                    creature.revealAc ? 'hide' : 'reveal'
-                ];
+            // Get right menu item title for this creature
+            const menuItemTitle = revealAcMenuItemTitles[
+                creature.revealAc ? 'hide' : 'reveal'
+            ];
 
-                const reveal_ac = !creature.revealAc;
+            const reveal_ac = !creature.revealAc;
 
-                menu.addItem((item) => {
-                    item.setTitle(menuItemTitle)
-                        .onClick(() => {
-                            tracker.getOrderedCreatures()
-                                .filter((c) => {
-                                    if ($data.revealCreatureACForSameType) {
-                                        return c.name === creature.name
-                                    }
+            menu.addItem((item) => {
+                item.setTitle(menuItemTitle)
+                    .onClick(() => {
+                        tracker.getOrderedCreatures()
+                            .filter((c) => {
+                                if ($data.revealCreatureACForSameType) {
+                                    return c.name === creature.name
+                                }
 
-                                    return c === creature;
-                                })
-                                .map((c) => {
-                                    tracker.updateCreatures({
-                                        creature: c,
-                                        change: { reveal_ac }
-                                    });
+                                return c === creature;
+                            })
+                            .map((c) => {
+                                tracker.updateCreatures({
+                                    creature: c,
+                                    change: { reveal_ac }
                                 });
+                            });
 
-                            tracker.updateAndSave();
-                        });
+                        tracker.updateAndSave();
                     });
-            }
+                });
+
             menu.addItem((item) => {
                 item.setIcon("pencil")
                     .setTitle("Edit")

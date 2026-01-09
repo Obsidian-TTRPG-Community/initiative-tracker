@@ -258,9 +258,9 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
             });
         new Setting(additionalContainer)
-            .setName("Display Creature AC in Player View")
+            .setName("Reveal AC of hurt creatures")
             .setDesc(
-                "Display creature AC in Player View. Only revealed after first Hit to creature."
+                "Reveal AC of creatures in Player View after they are first hit."
             )
             .addToggle((t) => {
                 t.setValue(this.plugin.data.displayCreatureACInPlayerView).onChange(
