@@ -548,6 +548,22 @@ function createTracker() {
                             Math.max(Math.abs(toAdd) * modifier, 1);
                         toAdd = roundHalf ? Math.trunc(toAdd) : toAdd;
                         message.hp = toAdd;
+
+                        // reveal ac to players, if setting enabled
+                        if (toAdd < 0 && _settings.displayCreatureACInPlayerView) {
+                            const creatures = get(ordered);
+
+                            creatures
+                                .filter(c => {
+                                    if (_settings.revealCreatureACForSameType) {
+                                        return c.name === creature.name;
+                                    }
+
+                                    return c === creature;
+                                })
+                                .map(creature => updates.push({creature, change: {reveal_ac: true}}));
+                        };
+
                         if (maxHpDamage) {
                             message.max = true;
                             change.max = toAdd;
@@ -1372,5 +1388,10 @@ class Tracker {
             updates.clear();
             return updates;
         });
+    }
+    revealCreatureAc (creature: Creature) {
+        const creatures = this.ordered;
+
+        console.log(creatures);
     }
 }

@@ -55,23 +55,10 @@
         );
 
         // also check if general ac setting is enabled
-        return anyRevealed || $data.displayCreatureACInPlayerView;
+        return anyRevealed;
     }
 
     const showCreatureAc = (creature: Creature) => {
-        if ($data.displayCreatureACInPlayerView) {
-            if ($data.revealCreatureACForSameType) {
-                const creatureName = creature.name;
-
-                // check if any other creature with same name is already hurt
-                return activeAndVisible
-                    .filter((c) => c.name === creatureName)
-                    .some((c) => c.hp < c.max);
-            }
-
-            return creature.hp < creature.max;
-        }
-
         return creature.revealAc;
     }
 
@@ -117,7 +104,7 @@
                 {#if showACColumn(activeAndVisible)}
                     <td class="center">
                         {#if showCreatureAc(creature)}
-                            <span class="armor-class">{@html creature.ac}</span>
+                            <span class="armor-class">{@html creature.current_ac || creature.ac}</span>
                         {/if}
                     </td>
                 {/if}
