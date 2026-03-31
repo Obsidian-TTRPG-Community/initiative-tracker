@@ -37,7 +37,6 @@
                     [, link] = link.match(/\[\[(.+?)(?:\|.+?)?\]\]/);
                 }
 
-                // @ts-expect-error — hover-link is not in Obsidian's public types
                 app.workspace.trigger("hover-link", {
                     event: evt,
                     source: INITIATIVE_TRACKER_VIEW,
