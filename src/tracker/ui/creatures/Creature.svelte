@@ -36,13 +36,13 @@
                     [, link] = link.match(/\[\[(.+?)(?:\|.+?)?\]\]/);
                 }
 
-                app.workspace.trigger(
-                    "link-hover",
-                    {}, //hover popover, but don't need
-                    evt.target, //targetEl
-                    link, //linkText
-                    "initiative-tracker " //source
-                );
+                app.workspace.trigger("hover-link", {
+                    event: evt,
+                    source: "initiative-tracker",
+                    hoverParent: { hoverPopover: null },
+                    targetEl: evt.target as HTMLElement,
+                    linktext: link
+                });
             }
         }, 1000);
     };

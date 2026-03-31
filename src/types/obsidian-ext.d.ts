@@ -18,11 +18,14 @@ declare module "obsidian" {
     }
     interface Workspace {
         trigger(
-            name: "link-hover",
-            popover: any, //hover popover, but don't need
-            target: HTMLElement, //targetEl
-            note: string, //linkText
-            source: string //source
+            name: "hover-link",
+            payload: {
+                event: MouseEvent;
+                source: string;
+                hoverParent: import("obsidian").View | { hoverPopover: null };
+                targetEl: HTMLElement;
+                linktext: string;
+            }
         ): void;
     }
 

@@ -99,13 +99,15 @@ export class CreatureView extends ItemView {
             "a.internal-link",
             debounce(
                 (ev) =>
-                    app.workspace.trigger(
-                        "link-hover",
-                        {}, //hover popover, but don't need
-                        ev.target as HTMLElement, //targetEl
-                        (ev.target as HTMLAnchorElement).dataset.href, //linkText
-                        "initiative-tracker " //source
-                    ),
+                    app.workspace.trigger("hover-link", {
+                        event: ev,
+                        source: "initiative-tracker",
+                        hoverParent: this,
+                        targetEl: ev.target as HTMLElement,
+                        linktext:
+                            (ev.target as HTMLAnchorElement).dataset.href ??
+                            ""
+                    }),
                 10
             )
         );
