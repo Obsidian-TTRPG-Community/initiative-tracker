@@ -101,7 +101,7 @@ export class CreatureView extends ItemView {
                 (ev) =>
                     app.workspace.trigger("hover-link", {
                         event: ev,
-                        source: "initiative-tracker",
+                        source: INITIATIVE_TRACKER_VIEW,
                         hoverParent: this,
                         targetEl: ev.target as HTMLElement,
                         linktext:

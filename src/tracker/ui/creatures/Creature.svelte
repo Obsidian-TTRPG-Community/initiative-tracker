@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { DEFAULT_UNDEFINED, FRIENDLY, HIDDEN } from "src/utils";
+    import { DEFAULT_UNDEFINED, FRIENDLY, HIDDEN, INITIATIVE_TRACKER_VIEW } from "src/utils";
     import type { Creature } from "src/utils/creature";
     import Initiative from "./Initiative.svelte";
     import CreatureControls from "./CreatureControls.svelte";
@@ -23,6 +23,7 @@
         setIcon(div, FRIENDLY);
     };
 
+    const hoverParent: { hoverPopover: null } = { hoverPopover: null };
     let hoverTimeout: NodeJS.Timeout = null;
     const tryHover = (evt: MouseEvent) => {
         hoverTimeout = setTimeout(() => {
@@ -36,10 +37,11 @@
                     [, link] = link.match(/\[\[(.+?)(?:\|.+?)?\]\]/);
                 }
 
+                // @ts-expect-error — hover-link is not in Obsidian's public types
                 app.workspace.trigger("hover-link", {
                     event: evt,
-                    source: "initiative-tracker",
-                    hoverParent: { hoverPopover: null },
+                    source: INITIATIVE_TRACKER_VIEW,
+                    hoverParent,
                     targetEl: evt.target as HTMLElement,
                     linktext: link
                 });
