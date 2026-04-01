@@ -247,7 +247,7 @@ export default class InitiativeTracker extends Plugin {
 
         this.registerHoverLinkSource(INITIATIVE_TRACKER_VIEW, {
             display: "Initiative Tracker",
-            defaultMod: true
+            defaultMod: false
         });
 
         this.addCommands();
