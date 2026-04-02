@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.19](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/compare/13.0.18...13.0.19) (2026-04-02)
+
+
+### Bug Fixes
+
+* register hover previews ([#340](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/issues/340)) ([8e9840a](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/commit/8e9840a78c11471cf79a649e7e2016dc045516dc))
+
 ## [13.0.18](https://github.com/javalent/initiative-tracker/compare/13.0.17...13.0.18) (2025-08-17)
 
 
