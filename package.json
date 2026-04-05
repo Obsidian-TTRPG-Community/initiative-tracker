@@ -1,6 +1,6 @@
 {
     "name": "@javalent/initiative-tracker",
-    "version": "13.0.20",
+    "version": "14.0.0",
     "description": "TTRPG Initiative Tracker for Obsidian.md",
     "types": "./dist/index.d.ts",
     "scripts": {
