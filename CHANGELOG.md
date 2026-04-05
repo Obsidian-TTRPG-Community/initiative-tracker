@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.20](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/compare/13.0.19...13.0.20) (2026-04-05)
+
+
+### Bug Fixes
+
+* cleanup sidebar duplication ([#342](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/issues/342)) ([ec4362e](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/commit/ec4362ec29631c72936358fde87f6c3b90043f85))
+* persist combatant panes between sessions ([#344](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/issues/344)) ([8b0783b](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/commit/8b0783b8b2f07f7c184e4f793721711d92024302))
+
 ## [13.0.19](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/compare/13.0.18...13.0.19) (2026-04-02)
 
 
