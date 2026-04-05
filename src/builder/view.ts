@@ -25,14 +25,20 @@ export default class BuilderView extends ItemView {
     constructor(leaf: WorkspaceLeaf, public plugin: InitiativeTracker) {
         super(leaf);
     }
-    getState() {
-        return [...get(encounter).entries()];
+    getState(): Record<string, unknown> {
+        return { encounter: [...get(encounter).entries()] };
     }
     async setState(
-        state: [SRDMonster, number][],
+        state: Record<string, unknown>,
         result: ViewStateResult
     ): Promise<void> {
-        if (state && Array.isArray(state)) encounter.setMultiple(state);
+        // Support both legacy array format and new object format
+        const entries = (
+            Array.isArray(state)
+                ? state
+                : state?.encounter
+        ) as [SRDMonster, number][] | undefined;
+        if (entries && Array.isArray(entries)) encounter.setMultiple(entries);
         super.setState(state, result);
     }
     ui: Builder;
