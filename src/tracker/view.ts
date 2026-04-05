@@ -141,31 +141,51 @@ export class CreatureView extends ItemView {
         state: Record<string, unknown>,
         result: import("obsidian").ViewStateResult
     ): Promise<void> {
-        const name = state?.creatureName as string | undefined;
-        if (name) {
-            this.currentCreatureName = name;
-            const tryRestore = () => {
-                const creature =
-                    this.plugin.tracker
-                        .getOrderedCreatures()
-                        .find((c) => c.name === name) ??
-                    this.plugin.playerCreatures.get(name) ??
-                    this.plugin.getCreatureFromBestiary(name);
-                if (creature) this.render(creature);
-            };
-            if (
-                this.plugin.canUseStatBlocks &&
-                !window["FantasyStatblocks"].isResolved()
-            ) {
-                const unload = window["FantasyStatblocks"].onResolved(() => {
-                    tryRestore();
-                    unload();
-                });
-            } else {
-                tryRestore();
-            }
+        const name = state?.creatureName as string | null | undefined;
+        if (!name) {
+            this.currentCreatureName = null;
+            await this.render();
+            await super.setState(state, result);
+            return;
         }
-        super.setState(state, result);
+
+        this.currentCreatureName = name;
+        const tryRestore = async () => {
+            const creature =
+                this.plugin.tracker
+                    .getOrderedCreatures()
+                    .find((c) => c.name === name) ??
+                this.plugin.playerCreatures.get(name) ??
+                this.plugin.getCreatureFromBestiary(name);
+
+            if (creature) {
+                try {
+                    await this.render(creature);
+                } catch (error) {
+                    console.error(
+                        "Failed to restore creature view",
+                        error
+                    );
+                }
+                return;
+            }
+
+            this.currentCreatureName = null;
+            await this.render();
+        };
+
+        if (
+            this.plugin.canUseStatBlocks &&
+            !window["FantasyStatblocks"].isResolved()
+        ) {
+            const unload = window["FantasyStatblocks"].onResolved(() => {
+                void tryRestore().finally(unload);
+            });
+        } else {
+            await tryRestore();
+        }
+
+        await super.setState(state, result);
     }
     async render(creature?: Creature) {
         this.currentCreatureName = creature?.name ?? null;

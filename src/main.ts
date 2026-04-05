@@ -41,6 +41,7 @@ export default class InitiativeTracker extends Plugin {
     public data: InitiativeTrackerData;
     public tracker = tracker;
     playerCreatures: Map<string, Creature> = new Map();
+    private lastCombatantLeaf: WorkspaceLeaf | null = null;
     watchers: Map<TFile, HomebrewCreature> = new Map();
     getRoller(str: string) {
         if (!this.canUseDiceRoller) return;
@@ -722,19 +723,30 @@ export default class InitiativeTracker extends Plugin {
         await this.saveData(this.data);
         tracker.setData(this.data);
     }
+    private getActiveCombatant(): CreatureView | undefined {
+        if (
+            this.lastCombatantLeaf?.view instanceof CreatureView
+        ) {
+            return this.lastCombatantLeaf.view;
+        }
+        return this.combatant;
+    }
     async openCombatant(creature: Creature, newLeaf: boolean = false) {
         if (!this.canUseStatBlocks) return;
-        if (newLeaf || !this.combatant) {
+        const existing = this.getActiveCombatant();
+        if (newLeaf || !existing) {
             const leaf = this.app.workspace.getRightLeaf(true);
             await leaf.setViewState({
                 type: CREATURE_TRACKER_VIEW
             });
+            this.lastCombatantLeaf = leaf;
             const view = leaf.view as CreatureView;
             await view.render(creature);
             this.app.workspace.revealLeaf(leaf);
         } else {
-            await this.combatant.render(creature);
-            this.app.workspace.revealLeaf(this.combatant.leaf);
+            this.lastCombatantLeaf = existing.leaf;
+            await existing.render(creature);
+            this.app.workspace.revealLeaf(existing.leaf);
         }
     }
     private _builderIcon: HTMLElement;
