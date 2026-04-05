@@ -93,6 +93,7 @@ export default class TrackerView extends ItemView {
 export class CreatureView extends ItemView {
     buttonEl = this.contentEl.createDiv("creature-view-button");
     statblockEl = this.contentEl.createDiv("creature-statblock-container");
+    private currentCreatureId: string | null = null;
     private currentCreatureName: string | null = null;
     constructor(leaf: WorkspaceLeaf, public plugin: InitiativeTracker) {
         super(leaf);
@@ -135,28 +136,46 @@ export class CreatureView extends ItemView {
         this.app.workspace.trigger("initiative-tracker:stop-viewing");
     }
     getState(): Record<string, unknown> {
-        return { creatureName: this.currentCreatureName };
+        return {
+            creatureId: this.currentCreatureId,
+            creatureName: this.currentCreatureName
+        };
     }
     async setState(
         state: Record<string, unknown>,
         result: import("obsidian").ViewStateResult
     ): Promise<void> {
-        const name = state?.creatureName as string | null | undefined;
-        if (!name) {
+        const id =
+            typeof state?.creatureId === "string" ? state.creatureId : null;
+        const name =
+            typeof state?.creatureName === "string"
+                ? state.creatureName
+                : null;
+        if (!id && !name) {
+            this.currentCreatureId = null;
             this.currentCreatureName = null;
             await this.render();
             await super.setState(state, result);
             return;
         }
 
+        this.currentCreatureId = id;
         this.currentCreatureName = name;
         const tryRestore = async () => {
+            const ordered = this.plugin.tracker.getOrderedCreatures();
             const creature =
-                this.plugin.tracker
-                    .getOrderedCreatures()
-                    .find((c) => c.name === name) ??
-                this.plugin.playerCreatures.get(name) ??
-                this.plugin.getCreatureFromBestiary(name);
+                (id
+                    ? ordered.find((c) => c.id === id)
+                    : undefined) ??
+                (name
+                    ? ordered.find((c) => c.name === name)
+                    : undefined) ??
+                (name
+                    ? this.plugin.playerCreatures.get(name)
+                    : undefined) ??
+                (name
+                    ? this.plugin.getCreatureFromBestiary(name)
+                    : undefined);
 
             if (creature) {
                 try {
@@ -170,6 +189,7 @@ export class CreatureView extends ItemView {
                 return;
             }
 
+            this.currentCreatureId = null;
             this.currentCreatureName = null;
             await this.render();
         };
@@ -188,6 +208,7 @@ export class CreatureView extends ItemView {
         await super.setState(state, result);
     }
     async render(creature?: Creature) {
+        this.currentCreatureId = creature?.id ?? null;
         this.currentCreatureName = creature?.name ?? null;
         this.statblockEl.empty();
         if (!creature) {
