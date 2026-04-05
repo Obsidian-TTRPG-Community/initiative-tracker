@@ -95,6 +95,7 @@ export class CreatureView extends ItemView {
     statblockEl = this.contentEl.createDiv("creature-statblock-container");
     private currentCreatureId: string | null = null;
     private currentCreatureName: string | null = null;
+    private bestiaryUnload: (() => void) | null = null;
     constructor(leaf: WorkspaceLeaf, public plugin: InitiativeTracker) {
         super(leaf);
         this.load();
@@ -133,6 +134,10 @@ export class CreatureView extends ItemView {
             });
     }
     onunload(): void {
+        if (this.bestiaryUnload) {
+            this.bestiaryUnload();
+            this.bestiaryUnload = null;
+        }
         this.app.workspace.trigger("initiative-tracker:stop-viewing");
     }
     getState(): Record<string, unknown> {
@@ -200,9 +205,15 @@ export class CreatureView extends ItemView {
             this.plugin.canUseStatBlocks &&
             !window["FantasyStatblocks"].isResolved()
         ) {
+            this.statblockEl.empty();
+            this.statblockEl.createEl("em", {
+                text: "Loading bestiary\u2026"
+            });
             const unload = window["FantasyStatblocks"].onResolved(() => {
+                this.bestiaryUnload = null;
                 void tryRestore().finally(unload);
             });
+            this.bestiaryUnload = unload;
         } else {
             await tryRestore();
         }
