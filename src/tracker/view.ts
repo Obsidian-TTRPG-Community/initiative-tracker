@@ -191,6 +191,8 @@ export class CreatureView extends ItemView {
 
             this.currentCreatureId = null;
             this.currentCreatureName = null;
+            state.creatureId = null;
+            state.creatureName = null;
             await this.render();
         };
 
