@@ -103,7 +103,7 @@
                         ((creature.hp ?? 0) / creature.max) * 100
                     )}
                     on:click={(e) => {
-                        dispatch("open-combatant", creature);
+                        dispatch("open-combatant", { creature, newLeaf: e.ctrlKey || e.metaKey });
                         e.stopPropagation();
                     }}
                 >

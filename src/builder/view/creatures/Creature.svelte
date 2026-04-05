@@ -81,7 +81,7 @@
             <div
                 class="setting-item-name creature-name"
                 on:click={(evt) =>
-                    plugin.openCombatant(CreatureCreator.from(creature))}
+                    plugin.openCombatant(CreatureCreator.from(creature), evt.ctrlKey || evt.metaKey)}
             >
                 {creature.name}
                 {#if insignificant}

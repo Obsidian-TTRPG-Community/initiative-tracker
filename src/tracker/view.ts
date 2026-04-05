@@ -93,6 +93,7 @@ export default class TrackerView extends ItemView {
 export class CreatureView extends ItemView {
     buttonEl = this.contentEl.createDiv("creature-view-button");
     statblockEl = this.contentEl.createDiv("creature-statblock-container");
+    private currentCreatureName: string | null = null;
     constructor(leaf: WorkspaceLeaf, public plugin: InitiativeTracker) {
         super(leaf);
         this.load();
@@ -133,7 +134,41 @@ export class CreatureView extends ItemView {
     onunload(): void {
         this.app.workspace.trigger("initiative-tracker:stop-viewing");
     }
+    getState(): Record<string, unknown> {
+        return { creatureName: this.currentCreatureName };
+    }
+    async setState(
+        state: Record<string, unknown>,
+        result: import("obsidian").ViewStateResult
+    ): Promise<void> {
+        const name = state?.creatureName as string | undefined;
+        if (name) {
+            this.currentCreatureName = name;
+            const tryRestore = () => {
+                const creature =
+                    this.plugin.tracker
+                        .getOrderedCreatures()
+                        .find((c) => c.name === name) ??
+                    this.plugin.playerCreatures.get(name) ??
+                    this.plugin.getCreatureFromBestiary(name);
+                if (creature) this.render(creature);
+            };
+            if (
+                this.plugin.canUseStatBlocks &&
+                !window["FantasyStatblocks"].isResolved()
+            ) {
+                const unload = window["FantasyStatblocks"].onResolved(() => {
+                    tryRestore();
+                    unload();
+                });
+            } else {
+                tryRestore();
+            }
+        }
+        super.setState(state, result);
+    }
     async render(creature?: Creature) {
+        this.currentCreatureName = creature?.name ?? null;
         this.statblockEl.empty();
         if (!creature) {
             this.statblockEl.createEl("em", {

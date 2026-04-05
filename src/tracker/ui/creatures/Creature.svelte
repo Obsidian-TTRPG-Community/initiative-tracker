@@ -72,7 +72,7 @@
     <div
         class="name-holder"
         on:click|stopPropagation={(evt) => {
-            dispatch("open-combatant", creature);
+            dispatch("open-combatant", { creature, newLeaf: evt.ctrlKey || evt.metaKey });
         }}
         on:mouseenter={tryHover}
         on:mouseleave={cancelHover}

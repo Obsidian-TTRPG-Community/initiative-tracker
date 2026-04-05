@@ -32,7 +32,7 @@
     {#if creature.hidden}
         <span class="has-icon" use:hidden />
     {/if}
-    <span class="creature-name" on:click={() => plugin.openCombatant(creature)}>
+    <span class="creature-name" on:click={(evt) => plugin.openCombatant(creature, evt.ctrlKey || evt.metaKey)}>
         {#if creature.display && creature.display != creature.name}
             {creature.display}{count == 1 ? "" : "s"} ({creature.name})
         {:else}

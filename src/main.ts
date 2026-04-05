@@ -722,18 +722,20 @@ export default class InitiativeTracker extends Plugin {
         await this.saveData(this.data);
         tracker.setData(this.data);
     }
-    async openCombatant(creature: Creature) {
+    async openCombatant(creature: Creature, newLeaf: boolean = false) {
         if (!this.canUseStatBlocks) return;
-        if (!this.combatant) {
-            await this.app.workspace.ensureSideLeaf(
-                CREATURE_TRACKER_VIEW,
-                "right",
-                { active: true }
-            );
+        if (newLeaf || !this.combatant) {
+            const leaf = this.app.workspace.getRightLeaf(true);
+            await leaf.setViewState({
+                type: CREATURE_TRACKER_VIEW
+            });
+            const view = leaf.view as CreatureView;
+            await view.render(creature);
+            this.app.workspace.revealLeaf(leaf);
+        } else {
+            await this.combatant.render(creature);
+            this.app.workspace.revealLeaf(this.combatant.leaf);
         }
-
-        await this.combatant.render(creature);
-        this.app.workspace.revealLeaf(this.combatant.leaf);
     }
     private _builderIcon: HTMLElement;
     setBuilderIcon() {

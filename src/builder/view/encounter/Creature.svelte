@@ -51,8 +51,8 @@
 
     const skull = (node: HTMLElement) => setIcon(node, "skull");
 
-    const open = () => {
-        plugin.openCombatant(CreatureCreator.from(creature));
+    const open = (evt: MouseEvent) => {
+        plugin.openCombatant(CreatureCreator.from(creature), evt.ctrlKey || evt.metaKey);
     };
 </script>
 
