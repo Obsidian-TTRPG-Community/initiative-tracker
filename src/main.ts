@@ -618,6 +618,12 @@ export default class InitiativeTracker extends Plugin {
 
     async onunload() {
         await this.saveSettings();
+
+        this.app.workspace.detachLeavesOfType(INITIATIVE_TRACKER_VIEW);
+        this.app.workspace.detachLeavesOfType(PLAYER_VIEW_VIEW);
+        this.app.workspace.detachLeavesOfType(CREATURE_TRACKER_VIEW);
+        this.app.workspace.detachLeavesOfType(BUILDER_VIEW);
+
         this.app.workspace.trigger("initiative-tracker:unloaded");
         console.log("Initiative Tracker unloaded");
     }
@@ -723,7 +729,7 @@ export default class InitiativeTracker extends Plugin {
         if (!this.canUseStatBlocks) return;
         const view = this.combatant;
         if (!view) {
-            const leaf = this.app.workspace.getRightLeaf(true);
+            const leaf = this.app.workspace.getRightLeaf(false);
             await leaf.setViewState({
                 type: CREATURE_TRACKER_VIEW
             });

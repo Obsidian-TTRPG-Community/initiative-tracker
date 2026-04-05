@@ -39,6 +39,9 @@ export default class TrackerView extends ItemView {
         });
         this.ui.$on("player-view", () => this.openPlayerView());
     }
+    async onClose() {
+        this.ui?.$destroy();
+    }
     getViewType() {
         return INITIATIVE_TRACKER_VIEW;
     }

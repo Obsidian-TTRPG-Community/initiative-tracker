@@ -25,4 +25,7 @@ export default class PlayerView extends ItemView {
             props: {}
         });
     }
+    async onClose() {
+        this._app?.$destroy();
+    }
 }
