@@ -6,7 +6,7 @@ import { setIcon } from "obsidian";
 
 export * from "./constants";
 export * from "./icons";
-export * from "./conditions";
+export * from "./conditions/dnd5e";
 export { getRpgSystem, RpgSystemSetting } from "./rpg-system";
 
 export function convertFraction(s: string | number): number {

@@ -1,7 +1,8 @@
 import { RpgSystem } from "./rpgSystem";
-import { crToString, getFromCreatureOrBestiary } from "..";
+import { crToString, Dnd5eConditions, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
+import type { Condition } from "src/types/creatures";
 
 const XP_THRESHOLDS_PER_LEVEL: {
     [level: number]: { [threshold: string]: number };
@@ -70,6 +71,7 @@ const XP_PER_CR: Record<string, number> = {
 
 export class Dnd5eRpgSystem extends RpgSystem {
     plugin: InitiativeTracker;
+    systemConditions = Dnd5eConditions;
 
     override systemDifficulties: [string, string, ...string[]] = [
         "Easy",

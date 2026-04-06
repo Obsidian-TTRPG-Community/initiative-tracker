@@ -2,6 +2,7 @@ import type InitiativeTracker from "src/main";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
 import {
     DEFAULT_UNDEFINED,
+    Dnd5eConditions,
     convertFraction,
     crToString,
     getFromCreatureOrBestiary
@@ -12,6 +13,7 @@ import { Dnd5eRpgSystem } from "./dnd5e";
 export class Dnd5eLazyGmRpgSystem extends RpgSystem {
     plugin: InitiativeTracker;
     dnd5eRpgSystem: Dnd5eRpgSystem;
+    systemConditions = Dnd5eConditions;
 
     override systemDifficulties: [string, string, ...string[]] = [
 		"Not Deadly",

@@ -2,7 +2,6 @@ import type { Condition } from "src/types/creatures";
 import type { HomebrewCreature } from "src/types/creatures";
 import type { SRDMonster } from "src/types/creatures";
 import type { CreatureState } from "src/types/creatures";
-import { Conditions } from ".";
 import { DEFAULT_UNDEFINED } from "./constants";
 import type InitiativeTracker from "src/main";
 
@@ -265,7 +264,7 @@ export class Creature {
         creature.current_ac = state.currentAC;
         let statuses: Condition[] = [];
         for (const status of state.status) {
-            const existing = Conditions.find(({ name }) => status == name);
+            const existing = plugin.data.statuses.find(({ name }) => status == name);
             if (existing) {
                 statuses.push(existing);
             } else {

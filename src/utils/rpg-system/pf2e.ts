@@ -2,6 +2,8 @@ import { RpgSystem } from "./rpgSystem";
 import { crToString, getFromCreatureOrBestiary } from "..";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
 import type InitiativeTracker from "../../main";
+import type { Condition } from "src/types/creatures";
+import { Pf2eConditions } from "../conditions/pf2e";
 
 // level without proficiency variant
 // const xpVariantCreatureDifferences = new Map([
@@ -56,6 +58,7 @@ const PF2E_DND5E_DIFFICULTY_MAPPING: Record<string, string> = {
 
 export class Pathfinder2eRpgSystem extends RpgSystem {
     plugin: InitiativeTracker;
+    systemConditions = Pf2eConditions;
 
     override systemDifficulties: [string, string, ...string[]] = [
         "Trivial",

@@ -1,6 +1,5 @@
 import type { InitiativeTrackerData } from "src/settings/settings.types";
 import { Platform } from "obsidian";
-import { Conditions } from "./conditions";
 
 export const INITIATIVE_TRACKER_VIEW = "initiative-tracker-view";
 export const PLAYER_VIEW_VIEW = "initiative-tracker-player-view";
@@ -34,7 +33,7 @@ export const DEFAULT_SETTINGS: InitiativeTrackerData = {
     players: [],
     parties: [],
     defaultParty: null,
-    statuses: [...Conditions],
+    statuses: [],
     unconsciousId: "Unconscious",
     version: [],
     canUseDiceRoll: false,

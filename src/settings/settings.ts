@@ -16,7 +16,6 @@ import { PlayerSuggestionModal } from "../utils/suggester";
 import { FileInputSuggest, FolderInputSuggest } from "obsidian-utilities";
 import {
     AC,
-    Conditions,
     DEFAULT_UNDEFINED,
     EDIT,
     HP,
@@ -553,9 +552,15 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 d.setValue(
                     this.plugin.data.rpgSystem ?? RpgSystemSetting.Dnd5e
                 );
-                d.onChange(async (v) => {
-                    this.plugin.data.rpgSystem = v;
+                d.onChange(async (newSystem) => {
+                    let oldSystemConditions = getRpgSystem(this.plugin).systemConditions.map(c => c.name);
+                    this.plugin.data.rpgSystem = newSystem;
+                    // Swap old system conditions with new system conditions
+                    this.plugin.data.statuses = this.plugin.data.statuses.filter(f => !oldSystemConditions.contains(f.name))
+                    this.plugin.data.statuses.push(...getRpgSystem(this.plugin).systemConditions)
                     this.plugin.saveSettings();
+                    // We need to refresh the whole page because updating conditions happens in a different HTML element.
+                    this.display()
                 });
             });
 
@@ -834,7 +839,8 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
 
                 return b;
             });
-        if (!Conditions.every((c) => this.plugin.data.statuses.includes(c))) {
+        let baseSystemConditions = [...getRpgSystem(this.plugin).systemConditions];
+        if (!baseSystemConditions.every((c) => this.plugin.data.statuses.includes(c))) {
             add.addExtraButton((b) =>
                 b
                     .setIcon("reset")
@@ -844,7 +850,7 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                             new Map(
                                 [
                                     ...this.plugin.data.statuses,
-                                    ...Conditions
+                                    ...baseSystemConditions
                                 ].map((c) => [c.name, c])
                             ).values()
                         );

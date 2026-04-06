@@ -1,9 +1,11 @@
+import type { Condition } from "src/types/creatures";
 import { DEFAULT_UNDEFINED } from "../constants";
 import type { GenericCreature, DifficultyLevel, DifficultyThreshold } from "./index";
 
 export abstract class RpgSystem {
   abstract systemDifficulties: [string, string, ...string[]];
-
+  abstract systemConditions: Condition[];
+  
   /** The display name of the RPG system, used in the UI. */
   displayName: string = DEFAULT_UNDEFINED;
 
