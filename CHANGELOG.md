@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.21](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/compare/13.0.20...13.0.21) (2026-04-12)
+
+
+### Bug Fixes
+
+* skip ensureSideLeaf if leaf already exists ([#346](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/issues/346)) ([596e3fc](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/commit/596e3fc4f81ef292b2096a61f6b0a991d216649e))
+
 ## [13.0.20](https://github.com/Obsidian-TTRPG-Community/initiative-tracker/compare/13.0.19...13.0.20) (2026-04-05)
 
 
