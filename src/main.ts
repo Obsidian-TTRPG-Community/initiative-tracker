@@ -630,6 +630,11 @@ export default class InitiativeTracker extends Plugin {
     }
 
     async addTrackerView() {
+        if (
+            this.app.workspace.getLeavesOfType(INITIATIVE_TRACKER_VIEW)?.length
+        ) {
+            return;
+        }
         await this.app.workspace.ensureSideLeaf(
             INITIATIVE_TRACKER_VIEW,
             "right",
