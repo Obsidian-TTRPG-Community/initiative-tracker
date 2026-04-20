@@ -119,8 +119,12 @@ export class Creature {
                 this.temp > 0
                     ? `aria-label="Temp HP: ${this.temp}" style="font-weight:bold"`
                     : "";
+            const maxMods = 
+                this.current_max != this.max
+                    ? `aria-label="Normal max HP: ${this.max}" style="font-weight:bold"`
+                    : ""
             return `
-                <span ${tempMods}>${this.hp + this.temp}</span><span>/${
+                <span ${tempMods}>${this.hp + this.temp}</span><span ${maxMods}>/${
                 this.current_max
             }</span>
             `;

@@ -26,6 +26,7 @@ import type {
 } from "src/utils/rpg-system";
 import type { StackRoller } from "@javalent/dice-roller";
 
+
 type HPUpdate = {
     saved: boolean;
     resist: boolean;
@@ -834,15 +835,38 @@ function createTracker() {
                 }
                 return creatures;
             }),
-        reset: () =>
+        reset: (resetHp:boolean=true, resetMaxHp:boolean=true, resetStatus:boolean=true, resetAc:boolean=true) =>
             updateAndSave((creatures) => {
                 for (let creature of creatures) {
-                    creature.current_ac = creature.ac;
-                    creature.hp = creature.current_max = creature.max;
+                    if (resetAc) {
+                        creature.current_ac = creature.ac;
+                    }
+                    if (resetMaxHp) {
+                        creature.current_max = creature.max;
+                    }
+                    if (resetHp) {
+                        creature.hp = creature.current_max;
+                    }
+                    if (resetStatus) {
+                        creature.status.clear();
+                    }
                     creature.enabled = true;
-                    creature.status.clear();
                 }
-                _logger?.log("Encounter HP & Statuses reset");
+                const logMsg = [];
+                if (resetAc) {
+                    logMsg.push("AC");
+                }
+                if (resetHp) {
+                    logMsg.push("HP");
+                }
+                if (resetMaxHp) {
+                    logMsg.push("Max HP");
+                }
+                if (resetStatus) {
+                    logMsg.push("Statuses");
+                }
+                
+                _logger?.log("Encounter " + logMsg.join(", ") + " reset");
                 return creatures;
             }),
 

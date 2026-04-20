@@ -67,11 +67,37 @@
                 .setTitle("Add Creatures")
                 .onClick(() => dispatch("add-creatures"));
         });
-        menu.addItem((item) => {
-            item.setIcon(REDO)
-                .setTitle("Reset HP / Status")
-                .onClick(() => tracker.reset());
+        
+        const resetItem = menu.addItem((item) => {
+            item.setIcon(REDO).setTitle("Reset HP / Status");
+            
+            const resetMenu = item.setSubmenu();
+            
+            resetMenu.addItem((item) => {
+                item.setIcon("fold-vertical")
+                    .setTitle("Reset HP to current max")
+                    .onClick(() => tracker.reset(true, false, false, true))
+            });
+            
+            resetMenu.addItem((item) => {
+                item.setIcon("fold-vertical")
+                    .setTitle("Reset HP to current max and clear statuses")
+                    .onClick(() => tracker.reset(true, false, true, true))
+            });
+            
+            resetMenu.addItem((item) => {
+                item.setIcon("tent")
+                    .setTitle("Reset max HP and clear statuses")
+                    .onClick(() => tracker.reset())
+            });
+            
+            resetMenu.addItem((item) => {
+                item.setIcon("undo")
+                    .setTitle("Clear statuses")
+                    .onClick(() => tracker.reset(false, false, true, true))
+            });
         });
+        
         menu.addItem((item) => {
             item.setIcon(DICE)
                 .setTitle("Re-roll Initiatives")
