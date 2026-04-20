@@ -47,6 +47,7 @@ type CreatureUpdate = {
     //this is so dirty
     set_hp?: number;
     set_max_hp?: number;
+    reveal_ac?: boolean;
 };
 type CreatureUpdates = { creature: Creature; change: CreatureUpdate };
 const modifier = Platform.isMacOS ? "Meta" : "Control";
@@ -175,6 +176,10 @@ function createTracker() {
             if (change.name) {
                 creature.name = change.name;
                 creature.number = 0;
+            }
+
+            if (change.reveal_ac !== undefined) {
+                creature.revealAc = change.reveal_ac;
             }
             if (change.hp) {
                 // Reduce temp HP first
@@ -390,6 +395,7 @@ function createTracker() {
         updateCreatureByName: (name: string, change: CreatureUpdate) =>
             updateAndSave((creatures) => {
                 const creature = creatures.find((c) => c.name == name);
+
                 if (creature) {
                     if (!isNaN(Number(change.hp))) {
                         creature.hp = change.hp;
@@ -422,6 +428,9 @@ function createTracker() {
                                 creature.temp + change.temp
                             );
                         }
+                    }
+                    if (change.reveal_ac !== undefined) {
+                        creature.revealAc = change.reveal_ac;
                     }
                     if (change.marker) {
                         creature.marker = change.marker;
@@ -539,6 +548,22 @@ function createTracker() {
                             Math.max(Math.abs(toAdd) * modifier, 1);
                         toAdd = roundHalf ? Math.trunc(toAdd) : toAdd;
                         message.hp = toAdd;
+
+                        // reveal ac to players, if setting for auto reveal is enabled
+                        if (toAdd < 0 && _settings.displayCreatureACInPlayerView) {
+                            const creatures = get(ordered);
+
+                            creatures
+                                .filter(c => {
+                                    if (_settings.revealCreatureACForSameType) {
+                                        return c.name === creature.name;
+                                    }
+
+                                    return c === creature;
+                                })
+                                .map(creature => updates.push({creature, change: {reveal_ac: true}}));
+                        };
+
                         if (maxHpDamage) {
                             message.max = true;
                             change.max = toAdd;

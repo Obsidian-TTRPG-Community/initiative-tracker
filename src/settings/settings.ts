@@ -258,6 +258,32 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
                 );
             });
         new Setting(additionalContainer)
+            .setName("Reveal AC of hurt creatures")
+            .setDesc(
+                "Reveal AC of creatures in Player View after they are first hit."
+            )
+            .addToggle((t) => {
+                t.setValue(this.plugin.data.displayCreatureACInPlayerView).onChange(
+                    async (v) => {
+                        this.plugin.data.displayCreatureACInPlayerView = v;
+                        await this.plugin.saveSettings();
+                    }
+                );
+            })
+        new Setting(additionalContainer)
+            .setName("Reveal AC For Creatures of Same Type")
+            .setDesc(
+                "Whenever the AC of a creature is revealed to players, also reveal the AC for all other creatures of the same type (i.e. all Goblins)."
+            )
+            .addToggle((t) => {
+                t.setValue(this.plugin.data.revealCreatureACForSameType).onChange(
+                    async (v) => {
+                        this.plugin.data.revealCreatureACForSameType = v;
+                        await this.plugin.saveSettings();
+                    }
+                );
+            })
+        new Setting(additionalContainer)
             .setName("Roll HP for Creatures")
             .setDesc(
                 createFragment((e) => {

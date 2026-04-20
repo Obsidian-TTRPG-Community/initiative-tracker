@@ -47,6 +47,21 @@
     const friendIcon = (node: HTMLElement) => {
         setIcon(node, FRIENDLY);
     };
+
+    const showACColumn = (activeAndVisible: Creature[]) => {
+        // for the header, check if any creature has visible AC at the moment
+        const anyRevealed = activeAndVisible.some(
+            (creature) => creature.revealAc
+        );
+
+        // also check if general ac setting is enabled
+        return anyRevealed;
+    }
+
+    const showCreatureAc = (creature: Creature) => {
+        return creature.revealAc;
+    }
+
 </script>
 
 <table class="initiative-tracker-table" transition:fade>
@@ -55,6 +70,9 @@
         <th class="left" style="width:30%"><strong>Name</strong></th>
         <th style="width:15%" class="center"><strong use:hpIcon /></th>
         <th><strong> Statuses </strong></th>
+        {#if showACColumn(activeAndVisible)}
+            <th><strong use:acIcon /></th>
+        {/if}
     </thead>
     <tbody>
         {#each activeAndVisible as creature (creature.id)}
@@ -83,6 +101,13 @@
                 <td class="center">
                     {[...creature.status].map((s) => s.name).join(", ")}
                 </td>
+                {#if showACColumn(activeAndVisible)}
+                    <td class="center">
+                        {#if showCreatureAc(creature)}
+                            <span class="armor-class">{@html creature.current_ac || creature.ac}</span>
+                        {/if}
+                    </td>
+                {/if}
             </tr>
         {/each}
     </tbody>
