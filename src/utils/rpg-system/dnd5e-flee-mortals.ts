@@ -1,5 +1,5 @@
 import { RpgSystem } from "./rpgSystem";
-import { DEFAULT_UNDEFINED, convertFraction, crToString, getFromCreatureOrBestiary } from "..";
+import { DEFAULT_UNDEFINED, Dnd5eConditions, convertFraction, crToString, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
 
@@ -79,6 +79,7 @@ const DIFFICULY_CONVERSIONS: {
 
 export class Dnd5eFleeMortalsRpgSystem extends RpgSystem {
   plugin: InitiativeTracker;
+  systemConditions = Dnd5eConditions;
 
   override systemDifficulties: [string, string, ...string[]] = [
     "Trivial",

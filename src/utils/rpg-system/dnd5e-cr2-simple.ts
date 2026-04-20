@@ -1,5 +1,5 @@
 import { RpgSystem } from "./rpgSystem";
-import { crToString, getFromCreatureOrBestiary } from "..";
+import { crToString, Dnd5eConditions, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
 
@@ -75,6 +75,7 @@ const DIFFICULTY_TO_CSS: Record<string, string> = {
 
 export class Dnd5eCr2SimpleRpgSystem extends RpgSystem {
   plugin: InitiativeTracker;
+  systemConditions = Dnd5eConditions;
 
   override valueUnit = "Power";
 

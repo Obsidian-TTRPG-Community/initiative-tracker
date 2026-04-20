@@ -10,11 +10,11 @@ import {
 
 import {
     BUILDER_VIEW,
-    Conditions,
     CREATURE_TRACKER_VIEW,
     DEFAULT_SETTINGS,
     INITIATIVE_TRACKER_VIEW,
-    registerIcons
+    registerIcons,
+    getRpgSystem
 } from "./utils";
 
 import { PLAYER_VIEW_VIEW } from "./utils/constants";
@@ -712,9 +712,9 @@ export default class InitiativeTracker extends Plugin {
         if (this.data.statuses?.some((c) => !c.id)) {
             for (const condition of this.data.statuses) {
                 condition.id =
-                    condition.id ??
-                    Conditions.find((c) => c.name == condition.name)?.id ??
-                    getId();
+                    condition.id ?? // if id is set, take it
+                    getRpgSystem(this).systemConditions.find((c) => c.name === condition.name)?.id ?? //otherwise try match it to the system
+                    getId(); // otherwise generate a new ID
             }
             await this.saveSettings();
         }

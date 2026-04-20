@@ -2,7 +2,7 @@ import type { Condition } from "src/types/creatures";
 
 
 
-export const Conditions: Condition[] = [
+export const Dnd5eConditions: Condition[] = [
     {
         name: "Blinded",
         id: "Blinded",
