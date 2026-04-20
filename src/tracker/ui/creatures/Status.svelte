@@ -6,7 +6,7 @@
     const dispatch = createEventDispatcher();
 
     export let status: Condition;
-    if (isNaN(status.amount) || status.amount < 0) {
+    if (!!status.hasAmount && (isNaN(status.amount) || status.amount < 0)) {
         status.amount = status.startingAmount;
     }
     const deleteIcon = (node: HTMLElement) => {
@@ -34,11 +34,18 @@
                 use:minus
                 on:click={() => {
                     status.amount--;
-                    if (status.amount <= 0) dispatch("remove");
+                    if (status.amount <= 0) {
+                        dispatch("remove");
+                    } else {
+                        dispatch("update");
+                    }
                 }}
             />
             <span>{status.amount}</span>
-            <div class="icon" use:plus on:click={() => status.amount++} />
+            <div class="icon" use:plus on:click={() => {
+                status.amount++;
+                dispatch("update");
+            }} />
         </div>
     {/if}
     <div use:deleteIcon on:click={() => dispatch("remove")} />

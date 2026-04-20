@@ -32,7 +32,7 @@ export class Creature {
     current_max: number;
     level: number;
     player: boolean;
-    status: Set<Condition> = new Set();
+    status: Map<string, Condition> = new Map();
     marker: string;
     initiative: number;
     manualOrder: number;
@@ -59,14 +59,11 @@ export class Creature {
         this.modifier = this.modifier ?? 0;
     }
     addCondition(condition: Condition) {
-        if (![...this.status].find(cond => cond.name === condition.name && cond.amount === condition.amount)) {
-            this.status.add(condition);
-        }
+        this.status.set(condition.name, structuredClone(condition));
     }
     removeCondition(condition: Condition) {
-        this.status = new Set(
-            [...this.status].filter((s) => s.id != condition.id)
-        );    }
+        this.status.delete(condition.name);
+    }
     constructor(public creature: HomebrewCreature, initiative: number = 0) {
         this.name = creature.name;
         this.display = creature.display;
@@ -233,7 +230,8 @@ export class Creature {
             marker: this.marker,
             currentHP: this.hp,
             tempHP: this.temp,
-            status: Array.from(this.status).map((c) => c.name),
+            // Only the basic built-in conditions are available during loading, so we need to export hasAmount to make it display the amount after loading
+            status: Object.fromEntries(Array.from(this.status.values()).map((c) => [c.name, {'amount':c.amount, 'hasAmount': c.hasAmount}])),
             enabled: this.enabled,
             level: this.level,
             player: this.player,
@@ -263,20 +261,47 @@ export class Creature {
         creature.current_max = state.currentMaxHP;
         creature.hp = state.currentHP;
         creature.current_ac = state.currentAC;
-        let statuses: Condition[] = [];
-        for (const status of state.status) {
-            const existing = Conditions.find(({ name }) => status == name);
-            if (existing) {
-                statuses.push(existing);
-            } else {
-                statuses.push({
-                    name: status,
-                    description: null,
-                    id: getId()
-                });
+        let statuses = new Map<string, Condition>();
+        if (Array.isArray(state.status)) {
+            // Old style state saving, array of status names (supports loading existing data when upgrading the plugin)
+            for (const status of state.status) {
+                const existing = Conditions.find(({ name }) => status == name);
+                let newStatus;
+                if (existing) {
+                    newStatus = existing;
+                } else {
+                    newStatus = {
+                        name: status,
+                        description: null,
+                        id: getId()
+                    };
+                }
+                
+                statuses.set(newStatus.name, newStatus);
+            }
+        } else {
+            // New style state saving, saves data about condition in an object
+            for (const statusName in state.status) {
+                const existing = Conditions.find(({ name }) => statusName == name);
+                let newStatus;
+                if (existing) {
+                    newStatus = existing;
+                } else {
+                    newStatus = {
+                        name: statusName,
+                        description: null,
+                        id: getId()
+                    };
+                }
+                for (const field in state.status[statusName]) {
+                    newStatus[field] = state.status[statusName][field];
+                }
+
+                statuses.set(newStatus.name, newStatus);
             }
         }
-        creature.status = new Set(statuses);
+
+        creature.status = new Map(statuses);
         creature.active = state.active;
         return creature;
     }

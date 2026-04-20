@@ -25,6 +25,7 @@ import type {
     DifficultyThreshold
 } from "src/utils/rpg-system";
 import type { StackRoller } from "@javalent/dice-roller";
+import { statusDisplay } from "src/utils/conditions";
 
 type HPUpdate = {
     saved: boolean;
@@ -41,6 +42,7 @@ type CreatureUpdate = {
     temp?: number;
     max?: number;
     status?: Condition[];
+    update_status?: ConditionUpdate[];
     remove_status?: Condition[];
     hidden?: boolean;
     enabled?: boolean;
@@ -262,9 +264,24 @@ function createTracker() {
                     creature.addCondition(status);
                 }
             }
+            if (change.update_status?.length) {
+                for (const status of change.update_status) {
+                    creature.addCondition(status);
+                    const message: UpdateLogMessage = {
+                        name: creature.name,
+                        update_status: status,
+                    };
+                    _logger?.logUpdate([message]);
+                }
+            }
             if (change.remove_status?.length) {
                 for (const status of change.remove_status) {
                     creature.removeCondition(status);
+                    const message: UpdateLogMessage = {
+                        name: creature.name,
+                        remove_status: [status],
+                    };
+                    _logger?.logUpdate([message]);
                 }
             }
             if ("hidden" in change) {
@@ -549,7 +566,7 @@ function createTracker() {
                         }
                     }
                     if (statuses.length) {
-                        message.status = statuses.map((s) => s.name);
+                        message.status = statuses.map((s) => statusDisplay(s));
                         if (!entry.saved) {
                             change.status = statuses;
                         } else {
@@ -641,11 +658,17 @@ function createTracker() {
                             $round.set(round);
 
                             for (const creature of creatures) {
-                                creature.status = new Set(
-                                    [...creature.status].filter(
-                                        (s) => !s.resetOnRound
-                                    )
-                                );
+                                let removedStatuses = [];
+                                
+                                creature.status.forEach((status, name, _) => {
+                                    if (status.resetOnRound) {
+                                        removedStatuses.push(name);
+                                    }
+                                });
+                                
+                                for (const s of removedStatuses) {
+                                    creature.status.delete(s);
+                                }
                             }
 
                             _logger?.log("###", `Round ${round}`);
@@ -1320,7 +1343,7 @@ class Tracker {
                     }
                 }
                 if (statuses.length) {
-                    message.status = statuses.map((s) => s.name);
+                    message.status = statuses.map((s) => statusDisplay(s));
                     if (!entry.saved) {
                         change.status = statuses;
                     } else {

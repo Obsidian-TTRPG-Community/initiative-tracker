@@ -1,6 +1,12 @@
 import type { Condition } from "src/types/creatures";
 
-
+export function statusDisplay (status: Status): string {
+    if (status.hasAmount) {
+        return status.name + " (" + status.amount + ")";
+    } else {
+        return status.name;
+    }
+}
 
 export const Conditions: Condition[] = [
     {

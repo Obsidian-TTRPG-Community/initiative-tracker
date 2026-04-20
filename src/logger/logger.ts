@@ -1,6 +1,7 @@
 import { normalizePath, TFile } from "obsidian";
 import type InitiativeTracker from "../main";
 import type { Creature } from "../utils/creature";
+import { statusDisplay } from "../utils/conditions";
 
 import { tracker } from "src/tracker/stores/tracker";
 import type { UpdateLogMessage } from "./logger.types";
@@ -82,7 +83,7 @@ export default class Logger {
                     "|",
                     [
                         ...(player.status.size
-                            ? [...player.status].map((c) => c.name)
+                            ? [...player.status].map((c) => statusDisplay(c))
                             : ["-"])
                     ]
                         .join(", ")
@@ -106,7 +107,7 @@ export default class Logger {
                     "|",
                     [
                         ...(creature.status.size
-                            ? [...creature.status].map((c) => c.name)
+                            ? [...creature.status].map((c) => statusDisplay(c))
                             : ["-"])
                     ]
                         .join(", ")
@@ -223,6 +224,15 @@ export default class Logger {
                     perCreature.push(`took ${status.join(" and ")} status`);
                 }
             }
+            if (message.update_status) {
+                if (perCreature.length) {
+                    perCreature.push("and");
+                } else {
+                    perCreature.push(message.name);
+                }
+                // Tracker always sends status updates individually, so message creation is a bit easier
+                perCreature.push(`changed status ${message.update_status.name} to ${statusDisplay(message.update_status)}`);
+            }
             if (message.remove_status) {
                 if (perCreature.length) {
                     perCreature.push("and");
@@ -240,7 +250,7 @@ export default class Logger {
                 } else {
                     status = [message.remove_status[0]];
                 }
-                perCreature.push(`relieved of ${status.join(" and ")} status`);
+                perCreature.push(`relieved of ${status.map(s => s.name).join(" and ")} status`);
             }
             toLog.push(perCreature.join(" "));
         }

@@ -92,9 +92,15 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="statuses" on:click={(e) => e.stopPropagation()}>
         {#if statuses.size}
-            {#each [...statuses] as status}
+            {#each statuses.values() as status}
                 <Status
                     {status}
+                    on:update={() => {
+                        tracker.updateCreatures({
+                            creature,
+                            change: { update_status: [status]}
+                        });
+                    }}
                     on:remove={() => {
                         tracker.updateCreatures({
                             creature,

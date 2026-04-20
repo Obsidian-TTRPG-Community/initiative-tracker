@@ -8,6 +8,7 @@
     import { createEventDispatcher } from "svelte";
 
     import { tracker } from "../stores/tracker";
+    import { statusDisplay } from "src/utils/conditions";
     const { state, ordered, data } = tracker;
 
     const hpIcon = (node: HTMLElement) => {
@@ -81,7 +82,7 @@
                     {/if}
                 </td>
                 <td class="center">
-                    {[...creature.status].map((s) => s.name).join(", ")}
+                    {[...creature.status.values()].map((s) => statusDisplay(s)).join(", ")}
                 </td>
             </tr>
         {/each}

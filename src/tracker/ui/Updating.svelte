@@ -186,7 +186,7 @@
                                 }}
                             />
                             <div class="status-list-entries">
-                                {#each $statuses as status}
+                                {#each $statuses.values() as status}
                                     <Status
                                         {status}
                                         on:remove={function (evt) {
