@@ -3,7 +3,7 @@
     import { fade } from "svelte/transition";
     import { SyncLoader } from "svelte-loading-spinners";
 
-    import { AC, FRIENDLY, HP, INITIATIVE } from "src/utils";
+    import { AC, FRIENDLY, HP, INITIATIVE, SHOW_PLAYER_HP } from "src/utils";
     import type { Creature } from "src/utils/creature";
     import { createEventDispatcher } from "svelte";
 
@@ -47,6 +47,23 @@
     const friendIcon = (node: HTMLElement) => {
         setIcon(node, FRIENDLY);
     };
+    
+    const showHPValues = (creature: Creature) => {
+        if (!creature.player) {
+            return false;
+        }
+        
+        if (
+            $data.diplayPlayerHPValues == SHOW_PLAYER_HP.always || 
+            ($data.diplayPlayerHPValues == SHOW_PLAYER_HP.outsideCombat && $state == false) ||
+            ($data.diplayPlayerHPValues == SHOW_PLAYER_HP.whenFull && creature.hp >= creature.max) ||
+            ($data.diplayPlayerHPValues == SHOW_PLAYER_HP.outsideCombatOrFull && ($state == false || creature.hp >= creature.max))
+        ) {
+            return true;
+        }
+        
+        return false;
+    }
 </script>
 
 <table class="initiative-tracker-table" transition:fade>
@@ -74,7 +91,7 @@
                     class:center={true}
                     class={getHpStatus(creature.hp, creature.max).toLowerCase()}
                 >
-                    {#if creature.player && $data.diplayPlayerHPValues}
+                    {#if showHPValues(creature)}
                         <div class="center">{@html creature.hpDisplay}</div>
                     {:else}
                         <span>{getHpStatus(creature.hp, creature.max)}</span>

@@ -22,7 +22,9 @@ import {
     HP,
     INITIATIVE,
     OVERFLOW_TYPE,
-    RESOLVE_TIES
+    RESOLVE_TIES,
+    SHOW_PLAYER_HP,
+    DEFAULT_SETTINGS
 } from "../utils";
 import { RpgSystemSetting, getRpgSystem } from "../utils/rpg-system";
 import type { Party } from "./settings.types";
@@ -249,14 +251,19 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
             .setDesc(
                 "If turned off, player health will display as 'Healthy', 'Hurt', etc."
             )
-            .addToggle((t) => {
-                t.setValue(this.plugin.data.diplayPlayerHPValues).onChange(
-                    async (v) => {
-                        this.plugin.data.diplayPlayerHPValues = v;
-                        await this.plugin.saveSettings();
-                    }
-                );
+            .addDropdown((d) => {
+                d.addOption(SHOW_PLAYER_HP.never, "Never");
+                d.addOption(SHOW_PLAYER_HP.outsideCombat, "Outside combat");
+                d.addOption(SHOW_PLAYER_HP.whenFull, "When full");
+                d.addOption(SHOW_PLAYER_HP.outsideCombatOrFull, "When full or outside combat");
+                d.addOption(SHOW_PLAYER_HP.always, "Always");
+                d.setValue(this.plugin.data.diplayPlayerHPValues ?? DEFAULT_SETTINGS.diplayPlayerHPValues);
+                d.onChange(async (v) => {
+                    this.plugin.data.diplayPlayerHPValues = v;
+                    await this.plugin.saveSettings();
+                });
             });
+            
         new Setting(additionalContainer)
             .setName("Roll HP for Creatures")
             .setDesc(

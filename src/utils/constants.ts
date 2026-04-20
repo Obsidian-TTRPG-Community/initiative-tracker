@@ -30,6 +30,14 @@ export const RESOLVE_TIES: { [key: string]: string } = {
     random: "random",
 };
 
+export const SHOW_PLAYER_HP: { [key: string]: string } = {
+    always: "always",
+    outsideCombat: "outsideCombat",
+    whenFull: "whenFull",
+    outsideCombatOrFull: "outsideCombatOrFull",
+    never: "never",
+};
+
 export const DEFAULT_SETTINGS: InitiativeTrackerData = {
     players: [],
     parties: [],
@@ -73,7 +81,7 @@ export const DEFAULT_SETTINGS: InitiativeTrackerData = {
     logFolder: "/",
     resolveTies: RESOLVE_TIES.playerFirst,
     useLegacy: false,
-    diplayPlayerHPValues: true,
+    diplayPlayerHPValues: SHOW_PLAYER_HP.always,
     rollHP: false,
     descending: true,
     builder: {

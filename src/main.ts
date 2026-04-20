@@ -17,7 +17,7 @@ import {
     registerIcons
 } from "./utils";
 
-import { PLAYER_VIEW_VIEW } from "./utils/constants";
+import { PLAYER_VIEW_VIEW, SHOW_PLAYER_HP } from "./utils/constants";
 import type { InitiativeTrackerData } from "./settings/settings.types";
 import type { InitiativeViewState } from "./tracker/view.types";
 import type { HomebrewCreature } from "./types/creatures";
@@ -482,6 +482,14 @@ export default class InitiativeTracker extends Plugin {
                     }
                 })
             );
+            // Update display player HP on player view from toggle to multiple choice
+            if (this.data.diplayPlayerHPValues === false) {
+                this.data.diplayPlayerHPValues = SHOW_PLAYER_HP.never;
+                await this.saveSettings();
+            } else if (this.data.diplayPlayerHPValues === true) {
+                this.data.diplayPlayerHPValues = SHOW_PLAYER_HP.always;
+                await this.saveSettings();
+            }
         });
 
         console.log("Initiative Tracker v" + this.manifest.version + " loaded");

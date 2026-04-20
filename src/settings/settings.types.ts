@@ -41,7 +41,7 @@ export interface InitiativeTrackerData {
     logFolder: string;
     resolveTies: string;
     useLegacy: boolean;
-    diplayPlayerHPValues: boolean;
+    diplayPlayerHPValues: string;
     rollHP: boolean;
     builder: BuilderState;
     descending: boolean;
