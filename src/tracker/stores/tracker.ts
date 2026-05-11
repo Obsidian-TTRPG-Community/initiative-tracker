@@ -804,7 +804,7 @@ function createTracker() {
                     for (const player of players) {
                         if (
                             !tempCreatureArray.find(
-                                (p) => p.player && p.id == player.id
+                                (p) => p.player && (p.id == player.id || p.name == player.name)
                             )
                         ) {
                             tempCreatureArray.push(player);
