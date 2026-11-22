@@ -346,7 +346,7 @@
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div
                     use:dmView
-                    aria-label="Open DM Pop-out"
+                    aria-label="Open {$data.gmTitle ?? 'DM'} Pop-out"
                     on:click={(evt) => dispatch("dm-view")}
                 />
             {/if}

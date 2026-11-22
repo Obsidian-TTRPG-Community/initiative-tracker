@@ -13,7 +13,7 @@ import App from "./ui/App.svelte";
 export default class DMView extends ItemView {
     ui: App;
     getDisplayText(): string {
-        return "DM View";
+        return `${this.plugin.gmTitle} View`;
     }
     getViewType(): string {
         return DM_VIEW_VIEW;

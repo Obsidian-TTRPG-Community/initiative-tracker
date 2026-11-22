@@ -25,7 +25,7 @@ import {
     RESOLVE_TIES
 } from "../utils";
 import { RpgSystemSetting, getRpgSystem } from "../utils/rpg-system";
-import type { Party } from "./settings.types";
+import type { GmTitle, Party } from "./settings.types";
 import type { InputValidate } from "./settings.types";
 import type { Condition } from "src/types/creatures";
 import type { HomebrewCreature } from "src/types/creatures";
@@ -134,6 +134,21 @@ export default class InitiativeTrackerSettings extends PluginSettingTab {
     private _displayBase(containerEl: HTMLDivElement) {
         containerEl.empty();
         new Setting(containerEl).setHeading().setName("Basic Settings");
+        new Setting(containerEl)
+            .setName("Game Master Title")
+            .setDesc(
+                "What to call the person running the game, e.g. the \"DM Pop-out\" or \"GM Pop-out\"."
+            )
+            .addDropdown((d) => {
+                d.addOption("DM", "DM (Dungeon Master)")
+                    .addOption("GM", "GM (Game Master)")
+                    .setValue(this.plugin.gmTitle)
+                    .onChange(async (v) => {
+                        this.plugin.data.gmTitle = v as GmTitle;
+                        await this.plugin.saveSettings();
+                        this.plugin.updateGmTitle();
+                    });
+            });
         new Setting(containerEl)
             .setName("Display Beginner Tips")
             .setDesc(

@@ -510,7 +510,7 @@ export default class InitiativeTracker extends Plugin {
         });
         this.addCommand({
             id: "open-dm-view",
-            name: "Open DM Pop-out",
+            name: `Open ${this.gmTitle} Pop-out`,
             callback: () => this.openDMView()
         });
         this.addCommand({
@@ -672,6 +672,23 @@ export default class InitiativeTracker extends Plugin {
     }
     async openPlayerView() {
         return (await this.openInPopout(PLAYER_VIEW_VIEW)).view as PlayerView;
+    }
+    /** "DM" or "GM", per the user's setting. */
+    get gmTitle() {
+        return this.data.gmTitle ?? "DM";
+    }
+    /** Apply a change to the DM/GM title to already-open UI and the command. */
+    updateGmTitle() {
+        const command =
+            this.app.commands.commands[`${this.manifest.id}:open-dm-view`];
+        if (command) {
+            command.name = `${this.manifest.name}: Open ${this.gmTitle} Pop-out`;
+        }
+        for (const leaf of this.app.workspace.getLeavesOfType(DM_VIEW_VIEW)) {
+            // Not in the public API; refreshes the tab title.
+            (leaf as WorkspaceLeaf & { updateHeader?: () => void })
+                .updateHeader?.();
+        }
     }
     async openDMView() {
         return (await this.openInPopout(DM_VIEW_VIEW)).view as DMView;

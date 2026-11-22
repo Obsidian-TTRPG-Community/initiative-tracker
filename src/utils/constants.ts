@@ -82,7 +82,8 @@ export const DEFAULT_SETTINGS: InitiativeTrackerData = {
         showXP: true,
         sidebarIcon: true
     },
-    rollPlayerInitiatives: RollPlayerInitiativeBehavior.Always
+    rollPlayerInitiatives: RollPlayerInitiativeBehavior.Always,
+    gmTitle: "DM"
 };
 
 export const DECIMAL_TO_VULGAR_FRACTION: Record<string, string> = {
