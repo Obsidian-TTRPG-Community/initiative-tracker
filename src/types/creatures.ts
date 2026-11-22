@@ -84,11 +84,14 @@ export type StatusExpiry =
           whose: "source" | "target";
           /** The creature that applied the status (when `whose` is "source"). */
           sourceId?: string;
+          /** How many of that creature's turns it lasts. Defaults to 1 (its next turn). */
+          turns?: number;
           /** Resolved when applied: id of the creature whose turn ends the status. */
           creatureId?: string;
           /**
-           * Turn ends to ignore before expiring. Set to 1 when the status is applied
-           * during that creature's own turn, since its *next* turn is what counts.
+           * Matching turn starts/ends still to pass before it expires; counts
+           * down as turns pass. Starts at `turns - 1`, plus 1 for an "end" timing
+           * applied during that creature's own turn (its *next* turn is what counts).
            */
           skip?: number;
       }

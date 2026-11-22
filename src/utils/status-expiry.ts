@@ -33,13 +33,27 @@ export function instantiateStatus(
         delete copy.expiry;
         return copy;
     }
+    const turns = Math.max(1, Math.floor(expiry.turns ?? 1));
     copy.expiry = {
         ...expiry,
         creatureId,
-        skip: expiry.timing === "end" && active?.id === creatureId ? 1 : 0
+        skip:
+            turns -
+            1 +
+            (expiry.timing === "end" && active?.id === creatureId ? 1 : 0)
     };
     return copy;
 }
+
+/** Whether a turn-based expiry is counting the given turn start/end. */
+const matchesTurn = (
+    expiry: StatusExpiry,
+    ended: Creature | null,
+    started: Creature
+) =>
+    expiry.type === "turn" &&
+    ((expiry.timing === "end" && !!ended && expiry.creatureId === ended.id) ||
+        (expiry.timing === "start" && expiry.creatureId === started.id));
 
 /**
  * Apply turn-based expiry when the turn passes from `ended` to `started`.
@@ -59,20 +73,10 @@ export function processTurnChange(
             const expiry = status.expiry;
             if (!expiry) continue;
             if (expiry.type === "turn") {
-                if (
-                    expiry.timing === "end" &&
-                    ended &&
-                    expiry.creatureId === ended.id
-                ) {
-                    if (expiry.skip) {
-                        expiry.skip--;
-                        continue;
-                    }
-                    expired.push({ creature, status });
-                } else if (
-                    expiry.timing === "start" &&
-                    expiry.creatureId === started.id
-                ) {
+                if (!matchesTurn(expiry, ended, started)) continue;
+                if (expiry.skip) {
+                    expiry.skip--;
+                } else {
                     expired.push({ creature, status });
                 }
             } else if (
@@ -89,6 +93,41 @@ export function processTurnChange(
     return { expired, saves };
 }
 
+/**
+ * Undo `processTurnChange` for the turn passing from `ended` to `started`
+ * (i.e. when going back to `ended`'s turn): give back the turn that was
+ * counted down. Statuses that expired are restored separately by the caller.
+ */
+export function rewindTurnChange(
+    creatures: Creature[],
+    ended: Creature,
+    started: Creature
+) {
+    for (const creature of creatures) {
+        for (const status of creature.status) {
+            const expiry = status.expiry;
+            if (expiry?.type === "turn" && matchesTurn(expiry, ended, started)) {
+                expiry.skip = (expiry.skip ?? 0) + 1;
+            }
+        }
+    }
+}
+
+/**
+ * How many more of the timing creature's turns a turn-based status lasts:
+ * 0 means it ends this turn, 1 means its next turn.
+ */
+export function turnsLeft(
+    expiry: StatusExpiry & { type: "turn" },
+    activeId?: string
+): number {
+    const skip = expiry.skip ?? Math.max(0, (expiry.turns ?? 1) - 1);
+    // During that creature's turn, the coming turn end is one of the counted ones.
+    return expiry.timing === "end" && activeId === expiry.creatureId
+        ? skip
+        : skip + 1;
+}
+
 /** Short label for a saving throw, e.g. "WIS", from the system if it knows it. */
 export const saveLabel = (stat: string, system?: RpgSystem) =>
     system?.getSavingThrow(stat)?.abbreviation ?? stat.toUpperCase();
@@ -98,12 +137,14 @@ export const saveLabel = (stat: string, system?: RpgSystem) =>
  *
  * @param owner The creature that has the status, if it has been applied.
  * @param system The active RPG system, for saving throw names.
+ * @param activeId Id of the creature whose turn it is, if combat is running.
  */
 export function describeExpiry(
     expiry: StatusExpiry | undefined,
     creatures: Creature[],
     owner?: Creature,
-    system?: RpgSystem
+    system?: RpgSystem,
+    activeId?: string
 ): string {
     if (!expiry) return "Until cleared";
     if (expiry.type === "save") {
@@ -123,5 +164,12 @@ export function describeExpiry(
         const creature = creatures.find((c) => c.id === id);
         whose = creature ? `${creature.getName()}'s` : "the attacker's";
     }
-    return `Until ${expiry.timing} of ${whose} next turn`;
+    // Before it's applied there's no countdown yet; describe the chosen duration.
+    const left =
+        expiry.creatureId != null
+            ? turnsLeft(expiry, activeId)
+            : Math.max(1, expiry.turns ?? 1);
+    if (left === 0) return `Until ${expiry.timing} of ${whose} current turn`;
+    if (left === 1) return `Until ${expiry.timing} of ${whose} next turn`;
+    return `Until ${expiry.timing} of ${whose} turn, ${left} turns left`;
 }

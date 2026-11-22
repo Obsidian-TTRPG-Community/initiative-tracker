@@ -28,6 +28,7 @@ import type { StackRoller } from "@javalent/dice-roller";
 import {
     instantiateStatus,
     processTurnChange,
+    rewindTurnChange,
     type PendingSave
 } from "src/utils/status-expiry";
 
@@ -65,6 +66,18 @@ function createTracker() {
 
     /** Repeated saving throws waiting for the DM to resolve. */
     const pendingSaves = writable<PendingSave[]>([]);
+
+    /**
+     * Statuses that expired at each recent turn change, newest last, so going
+     * back a turn can restore them. Kept in memory only.
+     */
+    type TurnRecord = {
+        ended: Creature | null;
+        started: Creature;
+        expired: PendingSave[];
+    };
+    let turnHistory: TurnRecord[] = [];
+    const MAX_TURN_HISTORY = 200;
 
     let _logger: Logger;
 
@@ -181,6 +194,8 @@ function createTracker() {
         started: Creature
     ) => {
         const { expired, saves } = processTurnChange(creatures, ended, started);
+        turnHistory.push({ ended, started, expired });
+        if (turnHistory.length > MAX_TURN_HISTORY) turnHistory.shift();
         for (const { creature, status } of expired) {
             _logger?.log(`${creature.getName()}'s ${status.name} status ended`);
         }
@@ -197,6 +212,49 @@ function createTracker() {
                 ...saves
             ]);
         }
+    };
+
+    /**
+     * Undo `handleTurnChange` when going back from `started`'s turn to
+     * `ended`'s: give back counted turns, restore statuses that expired, and
+     * drop save prompts that were raised by that turn change.
+     */
+    const handleTurnRewind = (
+        creatures: Creature[],
+        ended: Creature,
+        started: Creature
+    ) => {
+        rewindTurnChange(creatures, ended, started);
+
+        const last = turnHistory[turnHistory.length - 1];
+        if (last && last.ended === ended && last.started === started) {
+            turnHistory.pop();
+            for (const { creature, status } of last.expired) {
+                if (!creatures.includes(creature)) continue;
+                // Don't duplicate a status that was re-applied since.
+                if ([...creature.status].some((s) => s.name === status.name)) {
+                    continue;
+                }
+                creature.status.add(status);
+                _logger?.log(
+                    `${creature.getName()}'s ${status.name} status restored`
+                );
+            }
+        } else {
+            // The order changed since; the history no longer lines up.
+            turnHistory = [];
+        }
+
+        pendingSaves.update((pending) =>
+            pending.filter(({ creature, status }) => {
+                const expiry = status.expiry;
+                if (expiry?.type !== "save") return true;
+                return !(
+                    (expiry.timing === "end" && creature === ended) ||
+                    (expiry.timing === "start" && creature === started)
+                );
+            })
+        );
     };
 
     const performCreatureUpdate = (
@@ -769,6 +827,11 @@ function createTracker() {
                         }
                         _logger?.log("#####", `${prev.getName()}'s turn`);
                         prev.active = true;
+                        handleTurnRewind(
+                            creatures,
+                            prev,
+                            current_order[current]
+                        );
                     }
                 }
                 return creatures;
@@ -837,6 +900,7 @@ function createTracker() {
         new: (plugin: InitiativeTracker, state?: InitiativeViewState) =>
             updateAndSave((creatures) => {
                 pendingSaves.set([]);
+                turnHistory = [];
                 $round.set(state?.round ?? 1);
                 $state.set(state?.state ?? false);
                 $name.set(state?.name ?? null);

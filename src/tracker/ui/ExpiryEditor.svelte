@@ -28,10 +28,10 @@
 
     const allModes: { value: Mode; label: string }[] = [
         { value: "cleared", label: "Until cleared" },
-        { value: "turn:start:source", label: "Until start of attacker's next turn" },
-        { value: "turn:end:source", label: "Until end of attacker's next turn" },
-        { value: "turn:start:target", label: "Until start of target's next turn" },
-        { value: "turn:end:target", label: "Until end of target's next turn" },
+        { value: "turn:start:source", label: "Until start of attacker's turn" },
+        { value: "turn:end:source", label: "Until end of attacker's turn" },
+        { value: "turn:start:target", label: "Until start of target's turn" },
+        { value: "turn:end:target", label: "Until end of target's turn" },
         { value: "save", label: "Repeat saving throw" }
     ];
     // Only offer repeated saves if the game system has them.
@@ -58,6 +58,9 @@
     $: if (!savingThrows.some((s) => s.id === stat)) {
         stat = system.defaultSavingThrow ?? savingThrows[0]?.id;
     }
+    /** How many of the timing creature's turns it lasts; 1 = its next turn. */
+    let turns: number | null =
+        expiry?.type === "turn" ? expiry.turns ?? 1 : 1;
     let saveTiming: ExpiryTiming =
         expiry?.type === "save" ? expiry.timing : "end";
     let dc: number | null =
@@ -68,7 +71,8 @@
         sourceId: string | undefined,
         stat: SaveStat,
         saveTiming: ExpiryTiming,
-        dc: number | null
+        dc: number | null,
+        turns: number | null
     ): StatusExpiry | undefined => {
         if (mode === "cleared") return undefined;
         if (mode === "save") {
@@ -87,14 +91,16 @@
             ExpiryTiming,
             "source" | "target"
         ];
+        const count = Math.floor(Number(turns));
         return {
             type: "turn",
             timing,
             whose,
-            ...(whose === "source" ? { sourceId } : {})
+            ...(whose === "source" ? { sourceId } : {}),
+            ...(count > 1 ? { turns: count } : {})
         };
     };
-    $: expiry = build(mode, sourceId, stat, saveTiming, dc);
+    $: expiry = build(mode, sourceId, stat, saveTiming, dc, turns);
 </script>
 
 <div class="initiative-tracker-expiry-editor">
@@ -103,15 +109,35 @@
             <option value={option.value}>{option.label}</option>
         {/each}
     </select>
-    {#if mode.endsWith(":source")}
-        <label class="expiry-field">
-            <span>Attacker</span>
-            <select class="dropdown" bind:value={sourceId}>
-                {#each $ordered as creature (creature.id)}
-                    <option value={creature.id}>{creature.getName()}</option>
-                {/each}
-            </select>
-        </label>
+    {#if mode.startsWith("turn:")}
+        <div class="expiry-turn">
+            <label class="expiry-field">
+                <span>Lasts</span>
+                <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    aria-label="Number of turns"
+                    bind:value={turns}
+                />
+                <span
+                    >{Math.floor(Number(turns)) > 1 ? "turns" : "turn"}
+                    of the {mode.endsWith(":source") ? "attacker" : "target"}</span
+                >
+            </label>
+            {#if mode.endsWith(":source")}
+                <label class="expiry-field">
+                    <span>Attacker</span>
+                    <select class="dropdown" bind:value={sourceId}>
+                        {#each $ordered as creature (creature.id)}
+                            <option value={creature.id}
+                                >{creature.getName()}</option
+                            >
+                        {/each}
+                    </select>
+                </label>
+            {/if}
+        </div>
     {:else if mode === "save"}
         <div class="expiry-save">
             <select class="dropdown" bind:value={stat} aria-label="Saving throw">
@@ -159,6 +185,14 @@
     }
     .expiry-field select {
         flex: 1;
+    }
+    .expiry-field input {
+        width: 3.5rem;
+    }
+    .expiry-turn {
+        display: flex;
+        flex-flow: column;
+        gap: 0.25rem;
     }
     .expiry-save {
         display: flex;

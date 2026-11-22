@@ -19,8 +19,10 @@
     const plugin = getContext<InitiativeTracker>("plugin");
     const { data } = tracker;
     $: system = plugin ? getRpgSystem(plugin, $data?.rpgSystem) : undefined;
+    const { state } = tracker;
+    $: activeId = $state ? $tracker.find((c) => c.active)?.id : undefined;
     $: expiryLabel = status.expiry
-        ? describeExpiry(status.expiry, $tracker, owner, system)
+        ? describeExpiry(status.expiry, $tracker, owner, system, activeId)
         : null;
     const expiryIcon = (node: HTMLElement, type: string) => {
         const set = (type: string) =>
