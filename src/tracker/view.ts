@@ -18,8 +18,6 @@ import type InitiativeTracker from "../main";
 
 import App from "./ui/App.svelte";
 import type { Creature } from "../utils/creature";
-import { PLAYER_VIEW_VIEW } from "../utils/constants";
-import type PlayerView from "./player-view";
 
 export default class TrackerView extends ItemView {
     ui: App;
@@ -34,10 +32,12 @@ export default class TrackerView extends ItemView {
         this.ui = new App({
             target: this.contentEl,
             props: {
-                plugin: this.plugin
+                plugin: this.plugin,
+                leaf: this.leaf
             }
         });
-        this.ui.$on("player-view", () => this.openPlayerView());
+        this.ui.$on("player-view", () => this.plugin.openPlayerView());
+        this.ui.$on("dm-view", () => this.plugin.openDMView());
     }
     async onClose() {
         this.ui?.$destroy();
@@ -60,33 +60,8 @@ export default class TrackerView extends ItemView {
         return [];
     }
 
-    //open player view
-    playerViewOpened = false;
-    getExistingPlayerView(): PlayerView | undefined {
-        const existing =
-            this.plugin.app.workspace.getLeavesOfType(PLAYER_VIEW_VIEW);
-
-        if (existing.length) {
-            return existing[0].view as PlayerView;
-        }
-    }
-    async getPlayerView(): Promise<PlayerView> {
-        const existing = this.getExistingPlayerView();
-        if (existing) {
-            this.app.workspace.revealLeaf(existing.leaf);
-            return existing;
-        }
-
-        const leaf = this.app.workspace.getLeaf("window");
-        await leaf.setViewState({
-            type: PLAYER_VIEW_VIEW
-        });
-        await this.app.workspace.setActiveLeaf(leaf, { focus: true });
-        return leaf.view as PlayerView;
-    }
     async openPlayerView() {
-        await this.getPlayerView();
-        this.playerViewOpened = true;
+        return this.plugin.openPlayerView();
     }
 }
 
@@ -132,6 +107,24 @@ export class CreatureView extends ItemView {
                 await this.render();
                 this.app.workspace.trigger("initiative-tracker:stop-viewing");
             });
+        this.updateCloseButton();
+        this.registerEvent(
+            this.app.workspace.on("layout-change", () =>
+                this.updateCloseButton()
+            )
+        );
+    }
+    /**
+     * Only show the close button in the sidebars. Elsewhere (pop-out windows,
+     * the main editor area) the pane has a tab header with its own close
+     * button, and this one would overlap the header's menu.
+     */
+    updateCloseButton() {
+        const root = this.leaf?.getRoot();
+        const { leftSplit, rightSplit } = this.app.workspace;
+        this.buttonEl.toggle(
+            !!root && (root === leftSplit || root === rightSplit)
+        );
     }
     onunload(): void {
         if (this.bestiaryUnload) {
@@ -219,6 +212,9 @@ export class CreatureView extends ItemView {
         }
 
         await super.setState(state, result);
+    }
+    async onOpen() {
+        this.updateCloseButton();
     }
     async render(creature?: Creature) {
         this.currentCreatureId = creature?.id ?? null;

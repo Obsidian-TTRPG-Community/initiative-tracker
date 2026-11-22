@@ -95,6 +95,7 @@
             {#each [...statuses] as status}
                 <Status
                     {status}
+                    owner={creature}
                     on:remove={() => {
                         tracker.updateCreatures({
                             creature,

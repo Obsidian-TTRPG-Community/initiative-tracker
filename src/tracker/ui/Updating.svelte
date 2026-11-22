@@ -6,6 +6,7 @@
     import { getContext } from "svelte";
     import { getId } from "src/utils/creature";
     import Status from "src/tracker/ui/creatures/Status.svelte";
+    import ExpiryEditor from "./ExpiryEditor.svelte";
 
     import { tracker } from "../stores/tracker";
     const { updating, updateTarget } = tracker;
@@ -186,14 +187,20 @@
                                 }}
                             />
                             <div class="status-list-entries">
-                                {#each $statuses as status}
-                                    <Status
-                                        {status}
-                                        on:remove={function (evt) {
-                                            $statuses.remove(status);
-                                            $statuses = $statuses;
-                                        }}
-                                    />
+                                {#each $statuses as status (status.id)}
+                                    <div class="status-entry">
+                                        <Status
+                                            {status}
+                                            showExpiry={false}
+                                            on:remove={function (evt) {
+                                                $statuses.remove(status);
+                                                $statuses = $statuses;
+                                            }}
+                                        />
+                                        <ExpiryEditor
+                                            bind:expiry={status.expiry}
+                                        />
+                                    </div>
                                 {/each}
                             </div>
                         </div>
@@ -353,9 +360,22 @@
     }
     .status-list-entries {
         display: flex;
-        flex-flow: row wrap;
-        column-gap: 0.25rem;
-        margin: 0 2rem 0 0.5rem;
+        flex-flow: column;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 0;
+        margin: 0 0.7rem 0 0.5rem;
+    }
+    .status-entry {
+        display: flex;
+        flex-flow: column;
+        gap: 0.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--background-modifier-border);
+    }
+    .status-entry:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
     }
     .left {
         text-align: left;

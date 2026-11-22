@@ -2,6 +2,7 @@ import { RpgSystem } from "./rpgSystem";
 import { DEFAULT_UNDEFINED, convertFraction, crToString, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
+import { DND5E_SAVING_THROWS } from "./saving-throws";
 
 const ENCOUNTER_CR_PER_CHARACTER: {
   [avgCharacterLevel: number]: { easy: number, standard: number, hard: number, cap: number };
@@ -78,6 +79,8 @@ const DIFFICULY_CONVERSIONS: {
 };
 
 export class Dnd5eFleeMortalsRpgSystem extends RpgSystem {
+    override savingThrows = DND5E_SAVING_THROWS;
+    override defaultSavingThrow = "wis";
   plugin: InitiativeTracker;
 
   override systemDifficulties: [string, string, ...string[]] = [

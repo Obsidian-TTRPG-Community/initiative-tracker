@@ -48,7 +48,10 @@ export interface InitiativeTrackerData {
     version: number[];
 
     rollPlayerInitiatives: RollPlayerInitiativeBehavior;
+    /** What to call the person running the game in the UI, e.g. "DM Pop-out". */
+    gmTitle: GmTitle;
 }
+export type GmTitle = "DM" | "GM";
 export interface InputValidate {
     input: HTMLInputElement;
     validate: (i: HTMLInputElement) => boolean;

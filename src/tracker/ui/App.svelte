@@ -8,7 +8,7 @@
     import LoadEncounter from "./LoadEncounter.svelte";
 
     import { tracker } from "../stores/tracker";
-    import { ExtraButtonComponent, Notice } from "obsidian";
+    import { ExtraButtonComponent, Notice, type WorkspaceLeaf } from "obsidian";
     import { ADD, COPY } from "src/utils";
     import Updating from "./Updating.svelte";
     import Logger from "src/logger/logger";
@@ -17,20 +17,33 @@
     import Legacy from "./create/Legacy.svelte";
     import type { Creature } from "src/utils/creature";
     import Difficulty from "./Difficulty.svelte";
+    import SavePrompts from "./SavePrompts.svelte";
 
     export let plugin: InitiativeTracker;
+    /** True when rendered in the DM pop-out window rather than the sidebar. */
+    export let popout = false;
+    /** The workspace leaf hosting this tracker, used to open combatants in the same window. */
+    export let leaf: WorkspaceLeaf | undefined = undefined;
 
     const { data } = tracker;
 
     $: difficulty = $data.displayDifficulty;
 
-    tracker.setData(plugin.data);
-    tracker.setLogger(new Logger(plugin));
-    if (plugin.data.state) {
-        tracker.new(plugin, plugin.data.state);
-    } else {
-        tracker.setParty(plugin.data.defaultParty, plugin);
-        tracker.roll(plugin);
+    /**
+     * The tracker store is shared by every mounted tracker UI (sidebar and DM
+     * pop-out). Only load the encounter once per plugin load, otherwise opening
+     * a second view would reset the running encounter.
+     */
+    if (!plugin.trackerInitialized) {
+        tracker.setData(plugin.data);
+        tracker.setLogger(new Logger(plugin));
+        if (plugin.data.state) {
+            tracker.new(plugin, plugin.data.state);
+        } else {
+            tracker.setParty(plugin.data.defaultParty, plugin);
+            tracker.roll(plugin);
+        }
+        plugin.trackerInitialized = true;
     }
 
     const { ordered } = tracker;
@@ -75,13 +88,16 @@
         on:load={() => (loading = true)}
         on:add-creatures={() => editOrAdd()}
         on:player-view
+        on:dm-view
         on:open-map
+        {popout}
     />
 
     <Metadata />
+    <SavePrompts />
     <Table
         on:edit={(evt) => editOrAdd(evt.detail)}
-        on:open-combatant={(evt) => plugin.openCombatant(evt.detail.creature, evt.detail.newLeaf)}
+        on:open-combatant={(evt) => plugin.openCombatant(evt.detail.creature, evt.detail.newLeaf, leaf)}
     />
     <Updating />
     {#if saving}

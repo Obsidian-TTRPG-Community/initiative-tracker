@@ -1,11 +1,35 @@
 <script lang="ts">
     import { ExtraButtonComponent, setIcon } from "obsidian";
     import type { Condition } from "src/types/creatures";
-    import { createEventDispatcher } from "svelte";
-    
+    import type { Creature } from "src/utils/creature";
+    import { describeExpiry } from "src/utils/status-expiry";
+    import { createEventDispatcher, getContext } from "svelte";
+    import { tracker } from "../../stores/tracker";
+    import type InitiativeTracker from "src/main";
+    import { getRpgSystem } from "src/utils";
+
     const dispatch = createEventDispatcher();
 
     export let status: Condition;
+    /** The creature that has this status, used to describe its expiry. */
+    export let owner: Creature | undefined = undefined;
+    /** Show the expiry indicator (hidden while the status is being chosen). */
+    export let showExpiry = true;
+
+    const plugin = getContext<InitiativeTracker>("plugin");
+    const { data } = tracker;
+    $: system = plugin ? getRpgSystem(plugin, $data?.rpgSystem) : undefined;
+    const { state } = tracker;
+    $: activeId = $state ? $tracker.find((c) => c.active)?.id : undefined;
+    $: expiryLabel = status.expiry
+        ? describeExpiry(status.expiry, $tracker, owner, system, activeId)
+        : null;
+    const expiryIcon = (node: HTMLElement, type: string) => {
+        const set = (type: string) =>
+            setIcon(node, type === "save" ? "dice" : "hourglass");
+        set(type);
+        return { update: set };
+    };
     if (isNaN(status.amount) || status.amount < 0) {
         status.amount = status.startingAmount;
     }
@@ -27,6 +51,13 @@
         aria-label={status.description?.length ? status.description : null}
         >{status.name}</span
     >
+    {#if showExpiry && status.expiry}
+        <div
+            class="icon expiry"
+            use:expiryIcon={status.expiry.type}
+            aria-label={expiryLabel}
+        />
+    {/if}
     {#if status.hasAmount}
         <div class="amount">
             <div
@@ -64,5 +95,12 @@
     .icon {
         display: flex;
         align-items: center;
+    }
+    .expiry {
+        color: var(--text-faint);
+    }
+    .expiry :global(svg) {
+        width: var(--icon-xs);
+        height: var(--icon-xs);
     }
 </style>

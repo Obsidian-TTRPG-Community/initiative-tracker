@@ -58,9 +58,26 @@ export class Creature {
         }
         this.modifier = this.modifier ?? 0;
     }
+    /**
+     * Add a copy of `condition`. Each creature gets its own copy so amounts and
+     * expiry are tracked per creature. Re-applying a status with an expiry
+     * replaces the existing one, updating its duration.
+     */
     addCondition(condition: Condition) {
+        const copy: Condition = {
+            ...condition,
+            ...(condition.expiry ? { expiry: { ...condition.expiry } } : {})
+        };
+        if (condition.expiry) {
+            const existing = [...this.status].find(
+                (cond) => cond.name === condition.name
+            );
+            if (existing) this.status.delete(existing);
+            this.status.add(copy);
+            return;
+        }
         if (![...this.status].find(cond => cond.name === condition.name && cond.amount === condition.amount)) {
-            this.status.add(condition);
+            this.status.add(copy);
         }
     }
     removeCondition(condition: Condition) {
@@ -233,7 +250,9 @@ export class Creature {
             marker: this.marker,
             currentHP: this.hp,
             tempHP: this.temp,
-            status: Array.from(this.status).map((c) => c.name),
+            status: Array.from(this.status).map((c) =>
+                c.expiry ? { name: c.name, expiry: c.expiry } : c.name
+            ),
             enabled: this.enabled,
             level: this.level,
             player: this.player,
@@ -264,17 +283,21 @@ export class Creature {
         creature.hp = state.currentHP;
         creature.current_ac = state.currentAC;
         let statuses: Condition[] = [];
-        for (const status of state.status) {
-            const existing = Conditions.find(({ name }) => status == name);
-            if (existing) {
-                statuses.push(existing);
-            } else {
-                statuses.push({
+        for (const saved of state.status ?? []) {
+            const status = typeof saved === "string" ? saved : saved?.name;
+            if (!status) continue;
+            const expiry = typeof saved === "string" ? undefined : saved.expiry;
+            const existing =
+                plugin.data.statuses?.find(({ name }) => status == name) ??
+                Conditions.find(({ name }) => status == name);
+            statuses.push({
+                ...(existing ?? {
                     name: status,
                     description: null,
                     id: getId()
-                });
-            }
+                }),
+                ...(expiry ? { expiry: { ...expiry } } : {})
+            });
         }
         creature.status = new Set(statuses);
         creature.active = state.active;

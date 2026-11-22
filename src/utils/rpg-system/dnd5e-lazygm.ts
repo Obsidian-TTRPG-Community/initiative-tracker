@@ -8,8 +8,11 @@ import {
 } from "src/utils";
 import { RpgSystem } from "./rpgSystem";
 import { Dnd5eRpgSystem } from "./dnd5e";
+import { DND5E_SAVING_THROWS } from "./saving-throws";
 
 export class Dnd5eLazyGmRpgSystem extends RpgSystem {
+    override savingThrows = DND5E_SAVING_THROWS;
+    override defaultSavingThrow = "wis";
     plugin: InitiativeTracker;
     dnd5eRpgSystem: Dnd5eRpgSystem;
 

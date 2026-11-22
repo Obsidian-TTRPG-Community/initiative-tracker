@@ -2,6 +2,7 @@ import { RpgSystem } from "./rpgSystem";
 import { crToString, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
+import { DND5E_SAVING_THROWS } from "./saving-throws";
 
 const XP_THRESHOLDS_PER_LEVEL: {
     [level: number]: { [threshold: string]: number };
@@ -69,6 +70,8 @@ const XP_PER_CR: Record<string, number> = {
 };
 
 export class Dnd5eRpgSystem extends RpgSystem {
+    override savingThrows = DND5E_SAVING_THROWS;
+    override defaultSavingThrow = "wis";
     plugin: InitiativeTracker;
 
     override systemDifficulties: [string, string, ...string[]] = [
