@@ -1,5 +1,8 @@
+/** A status as saved in encounter state: a bare name, or a name plus expiry. */
+export type SavedStatus = string | { name: string; expiry?: StatusExpiry };
+
 export interface CreatureState extends HomebrewCreature {
-    status: string[];
+    status: SavedStatus[];
     enabled: boolean;
     currentMaxHP: number;
     currentHP: number;
@@ -57,6 +60,8 @@ export type Condition = {
     hasAmount?: boolean;
     startingAmount?: number;
     amount?: number;
+    /** When this status should end. Absent means "until cleared". */
+    expiry?: StatusExpiry;
 } & (
     | {
           hasAmount: true;
@@ -65,3 +70,32 @@ export type Condition = {
       }
     | {}
 );
+
+export type ExpiryTiming = "start" | "end";
+/** Id of a saving throw from the active RPG system (see `RpgSystem.savingThrows`). */
+export type SaveStat = string;
+
+export type StatusExpiry =
+    | {
+          /** Ends at the start or end of a creature's next turn. */
+          type: "turn";
+          timing: ExpiryTiming;
+          /** Whose turn: the creature that applied it, or the creature affected. */
+          whose: "source" | "target";
+          /** The creature that applied the status (when `whose` is "source"). */
+          sourceId?: string;
+          /** Resolved when applied: id of the creature whose turn ends the status. */
+          creatureId?: string;
+          /**
+           * Turn ends to ignore before expiring. Set to 1 when the status is applied
+           * during that creature's own turn, since its *next* turn is what counts.
+           */
+          skip?: number;
+      }
+    | {
+          /** The affected creature repeats a saving throw on each of its turns. */
+          type: "save";
+          timing: ExpiryTiming;
+          stat: SaveStat;
+          dc?: number;
+      };

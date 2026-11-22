@@ -2,6 +2,7 @@ import { RpgSystem } from "./rpgSystem";
 import { crToString, getFromCreatureOrBestiary } from "..";
 import type InitiativeTracker from "src/main";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
+import { DND5E_SAVING_THROWS } from "./saving-throws";
 
 const PLAYER_POWER_BY_LEVEL: Record<number, number> = {
   1: 11,
@@ -74,6 +75,8 @@ const DIFFICULTY_TO_CSS: Record<string, string> = {
 }
 
 export class Dnd5eCr2SimpleRpgSystem extends RpgSystem {
+    override savingThrows = DND5E_SAVING_THROWS;
+    override defaultSavingThrow = "wis";
   plugin: InitiativeTracker;
 
   override valueUnit = "Power";

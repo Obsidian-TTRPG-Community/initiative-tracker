@@ -17,7 +17,7 @@ import {
     registerIcons
 } from "./utils";
 
-import { PLAYER_VIEW_VIEW } from "./utils/constants";
+import { DM_VIEW_VIEW, PLAYER_VIEW_VIEW } from "./utils/constants";
 import type { InitiativeTrackerData } from "./settings/settings.types";
 import type { InitiativeViewState } from "./tracker/view.types";
 import type { HomebrewCreature } from "./types/creatures";
@@ -29,6 +29,7 @@ import { Creature, getId } from "./utils/creature";
 import TrackerView, { CreatureView } from "./tracker/view";
 import BuilderView from "./builder/view";
 import PlayerView from "./tracker/player-view";
+import DMView from "./tracker/dm-view";
 import { tracker } from "./tracker/stores/tracker";
 import { EncounterSuggester } from "./encounter/editor-suggestor";
 import { API } from "./api/api";
@@ -41,7 +42,10 @@ export default class InitiativeTracker extends Plugin {
     public data: InitiativeTrackerData;
     public tracker = tracker;
     playerCreatures: Map<string, Creature> = new Map();
-    private lastCombatantLeaf: WorkspaceLeaf | null = null;
+    /** The combatant leaf most recently used in each window. */
+    private lastCombatantLeaf: WeakMap<Window, WorkspaceLeaf> = new WeakMap();
+    /** Set once the shared tracker store has loaded its initial encounter. */
+    trackerInitialized = false;
     watchers: Map<TFile, HomebrewCreature> = new Map();
     getRoller(str: string) {
         if (!this.canUseDiceRoller) return;
@@ -236,6 +240,10 @@ export default class InitiativeTracker extends Plugin {
         this.registerView(
             PLAYER_VIEW_VIEW,
             (leaf: WorkspaceLeaf) => new PlayerView(leaf, this)
+        );
+        this.registerView(
+            DM_VIEW_VIEW,
+            (leaf: WorkspaceLeaf) => new DMView(leaf, this)
         );
         this.registerView(
             CREATURE_TRACKER_VIEW,
@@ -501,6 +509,11 @@ export default class InitiativeTracker extends Plugin {
             }
         });
         this.addCommand({
+            id: "open-dm-view",
+            name: "Open DM Pop-out",
+            callback: () => this.openDMView()
+        });
+        this.addCommand({
             id: "open-builder",
             name: "Open Encounter Builder",
             checkCallback: (checking) => {
@@ -622,6 +635,7 @@ export default class InitiativeTracker extends Plugin {
 
         this.app.workspace.detachLeavesOfType(INITIATIVE_TRACKER_VIEW);
         this.app.workspace.detachLeavesOfType(PLAYER_VIEW_VIEW);
+        this.app.workspace.detachLeavesOfType(DM_VIEW_VIEW);
         this.app.workspace.detachLeavesOfType(CREATURE_TRACKER_VIEW);
         this.app.workspace.detachLeavesOfType(BUILDER_VIEW);
 
@@ -640,6 +654,27 @@ export default class InitiativeTracker extends Plugin {
             "right",
             { active: false }
         );
+    }
+    /**
+     * Open a view type in its own pop-out window, or reveal it if it is
+     * already open somewhere.
+     */
+    private async openInPopout(type: string) {
+        const existing = this.app.workspace.getLeavesOfType(type);
+        if (existing.length) {
+            this.app.workspace.revealLeaf(existing[0]);
+            return existing[0];
+        }
+        const leaf = this.app.workspace.getLeaf("window");
+        await leaf.setViewState({ type, active: true });
+        await this.app.workspace.setActiveLeaf(leaf, { focus: true });
+        return leaf;
+    }
+    async openPlayerView() {
+        return (await this.openInPopout(PLAYER_VIEW_VIEW)).view as PlayerView;
+    }
+    async openDMView() {
+        return (await this.openInPopout(DM_VIEW_VIEW)).view as DMView;
     }
     get builder() {
         const leaves = this.app.workspace.getLeavesOfType(BUILDER_VIEW);
@@ -728,31 +763,66 @@ export default class InitiativeTracker extends Plugin {
         await this.saveData(this.data);
         tracker.setData(this.data);
     }
-    private getActiveCombatant(): CreatureView | undefined {
+    private getActiveCombatant(win: Window): CreatureView | undefined {
+        const last = this.lastCombatantLeaf.get(win);
         if (
-            this.lastCombatantLeaf?.view instanceof CreatureView
+            last?.view instanceof CreatureView &&
+            last.view.containerEl.win === win
         ) {
-            return this.lastCombatantLeaf.view;
+            return last.view;
         }
-        return this.combatant;
+        const leaf = this.app.workspace
+            .getLeavesOfType(CREATURE_TRACKER_VIEW)
+            .find(
+                (l) =>
+                    l.view instanceof CreatureView &&
+                    l.view.containerEl.win === win
+            );
+        return leaf?.view as CreatureView | undefined;
     }
-    async openCombatant(creature: Creature, newLeaf: boolean = false) {
+    /**
+     * Show a creature in a combatant pane.
+     *
+     * Panes are kept in the same window as `source` (the leaf the request came
+     * from). In the main window they open in the right sidebar; pop-out windows
+     * have no sidebars, so there the pane is split off beside `source` instead.
+     *
+     * @param newLeaf Open an additional pane rather than reusing an existing one.
+     * @param source The leaf that requested the combatant, if any.
+     */
+    async openCombatant(
+        creature: Creature,
+        newLeaf: boolean = false,
+        source?: WorkspaceLeaf
+    ) {
         if (!this.canUseStatBlocks) return;
-        const existing = this.getActiveCombatant();
-        if (newLeaf || !existing) {
-            const leaf = this.app.workspace.getRightLeaf(true);
+        const win = source?.view.containerEl.win ?? window;
+        const existing = this.getActiveCombatant(win);
+        let leaf: WorkspaceLeaf;
+        if (existing && !newLeaf) {
+            leaf = existing.leaf;
+        } else {
+            if (win === window) {
+                leaf = this.app.workspace.getRightLeaf(true);
+            } else if (existing) {
+                // Stack additional panes beneath the current one.
+                leaf = this.app.workspace.createLeafBySplit(
+                    existing.leaf,
+                    "horizontal"
+                );
+            } else {
+                leaf = this.app.workspace.createLeafBySplit(
+                    source,
+                    "vertical"
+                );
+            }
             await leaf.setViewState({
                 type: CREATURE_TRACKER_VIEW
             });
-            this.lastCombatantLeaf = leaf;
-            const view = leaf.view as CreatureView;
-            await view.render(creature);
-            this.app.workspace.revealLeaf(leaf);
-        } else {
-            this.lastCombatantLeaf = existing.leaf;
-            await existing.render(creature);
-            this.app.workspace.revealLeaf(existing.leaf);
         }
+        this.lastCombatantLeaf.set(win, leaf);
+        await (leaf.view as CreatureView).render(creature);
+        this.app.workspace.revealLeaf(leaf);
     }
     private _builderIcon: HTMLElement;
     setBuilderIcon() {

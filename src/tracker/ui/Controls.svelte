@@ -22,6 +22,9 @@
     import type InitiativeTracker from "src/main";
     import { tracker } from "../stores/tracker";
 
+    /** True when rendered in the DM pop-out window rather than the sidebar. */
+    export let popout = false;
+
     const { state, data, logFile, sort, party } = tracker;
 
     const desktop = Platform.isDesktop;
@@ -300,6 +303,9 @@
     const playerView = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon("view");
     };
+    const dmView = (node: HTMLElement) => {
+        new ExtraButtonComponent(node).setIcon("picture-in-picture-2");
+    };
     const logFileButton = (node: HTMLElement) => {
         new ExtraButtonComponent(node).setIcon("file-signature");
     };
@@ -336,6 +342,14 @@
                 aria-label="Open Player View"
                 on:click={(evt) => dispatch("player-view")}
             />
+            {#if !popout}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div
+                    use:dmView
+                    aria-label="Open DM Pop-out"
+                    on:click={(evt) => dispatch("dm-view")}
+                />
+            {/if}
         {/if}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
         <div use:menuIcon on:click={(evt) => open(evt)} />

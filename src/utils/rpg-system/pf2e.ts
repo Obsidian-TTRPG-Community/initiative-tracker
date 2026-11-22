@@ -2,6 +2,7 @@ import { RpgSystem } from "./rpgSystem";
 import { crToString, getFromCreatureOrBestiary } from "..";
 import type { DifficultyLevel, GenericCreature, DifficultyThreshold } from ".";
 import type InitiativeTracker from "../../main";
+import { PF2E_SAVING_THROWS } from "./saving-throws";
 
 // level without proficiency variant
 // const xpVariantCreatureDifferences = new Map([
@@ -55,6 +56,8 @@ const PF2E_DND5E_DIFFICULTY_MAPPING: Record<string, string> = {
 };
 
 export class Pathfinder2eRpgSystem extends RpgSystem {
+    override savingThrows = PF2E_SAVING_THROWS;
+    override defaultSavingThrow = "will";
     plugin: InitiativeTracker;
 
     override systemDifficulties: [string, string, ...string[]] = [

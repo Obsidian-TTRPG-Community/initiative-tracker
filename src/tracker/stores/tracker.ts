@@ -25,6 +25,11 @@ import type {
     DifficultyThreshold
 } from "src/utils/rpg-system";
 import type { StackRoller } from "@javalent/dice-roller";
+import {
+    instantiateStatus,
+    processTurnChange,
+    type PendingSave
+} from "src/utils/status-expiry";
 
 type HPUpdate = {
     saved: boolean;
@@ -57,6 +62,9 @@ function createTracker() {
     const { subscribe, set, update } = creatures;
 
     const $logFile = writable<TFile | null>();
+
+    /** Repeated saving throws waiting for the DM to resolve. */
+    const pendingSaves = writable<PendingSave[]>([]);
 
     let _logger: Logger;
 
@@ -161,6 +169,34 @@ function createTracker() {
         _logger?.log(
             `${creature.getName()} initiative changed to ${creature.initiative}`
         );
+    };
+
+    /**
+     * Handle status expiry as the turn passes from `ended` to `started`:
+     * remove expired statuses and queue any saving throws that are due.
+     */
+    const handleTurnChange = (
+        creatures: Creature[],
+        ended: Creature | null,
+        started: Creature
+    ) => {
+        const { expired, saves } = processTurnChange(creatures, ended, started);
+        for (const { creature, status } of expired) {
+            _logger?.log(`${creature.getName()}'s ${status.name} status ended`);
+        }
+        if (saves.length) {
+            pendingSaves.update((pending) => [
+                ...pending.filter(
+                    (p) =>
+                        !saves.some(
+                            (s) =>
+                                s.creature === p.creature &&
+                                s.status === p.status
+                        )
+                ),
+                ...saves
+            ]);
+        }
     };
 
     const performCreatureUpdate = (
@@ -387,6 +423,33 @@ function createTracker() {
         updating,
         updateTarget,
         updateCreatures,
+
+        pendingSaves,
+        /**
+         * Resolve a repeated saving throw. On a success the status is removed;
+         * on a failure it stays until the next save.
+         */
+        resolveSave: (
+            prompt: PendingSave,
+            saved: boolean,
+            saveName?: string
+        ) => {
+            pendingSaves.update((pending) => pending.filter((p) => p !== prompt));
+            const { creature, status } = prompt;
+            _logger?.log(
+                `${creature.getName()} ${saved ? "succeeded" : "failed"} ${
+                    saveName ? saveName + " " : ""
+                }save against ${status.name}`
+            );
+            if (saved) {
+                updateCreatures({
+                    creature,
+                    change: { remove_status: [status] }
+                });
+            }
+        },
+        dismissSave: (prompt: PendingSave) =>
+            pendingSaves.update((pending) => pending.filter((p) => p !== prompt)),
         updateCreatureByName: (name: string, change: CreatureUpdate) =>
             updateAndSave((creatures) => {
                 const creature = creatures.find((c) => c.name == name);
@@ -551,7 +614,12 @@ function createTracker() {
                     if (statuses.length) {
                         message.status = statuses.map((s) => s.name);
                         if (!entry.saved) {
-                            change.status = statuses;
+                            const active = get($state)
+                                ? current_order.find((c) => c.active)
+                                : undefined;
+                            change.status = statuses.map((s) =>
+                                instantiateStatus(s, creature, active)
+                            );
                         } else {
                             message.saved = true;
                         }
@@ -620,6 +688,7 @@ function createTracker() {
                 });
                 if (current == -1) {
                     current_order[0].active = true;
+                    handleTurnChange(creatures, null, current_order[0]);
                 } else {
                     let next;
                     let nextIndex = current;
@@ -652,6 +721,11 @@ function createTracker() {
                         }
                         _logger?.log("#####", `${next.getName()}'s turn`);
                         next.active = true;
+                        handleTurnChange(
+                            creatures,
+                            current_order[current],
+                            next
+                        );
                     }
                 }
                 return creatures;
@@ -762,6 +836,7 @@ function createTracker() {
             }),
         new: (plugin: InitiativeTracker, state?: InitiativeViewState) =>
             updateAndSave((creatures) => {
+                pendingSaves.set([]);
                 $round.set(state?.round ?? 1);
                 $state.set(state?.state ?? false);
                 $name.set(state?.name ?? null);
